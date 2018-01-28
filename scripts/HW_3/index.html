@@ -1,0 +1,96 @@
+<!DOCTYPE html><html><head>
+  <title>HW 3 template</title>
+
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <script src="p5.sound.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Bot.js"></script>
+  <script src="Pellet.js"></script>
+  <script src="sketch.js"></script>
+  <script src="util419.js"></script>
+  <script src="sprintf.js"></script>
+</head>
+
+<body>
+  <h2>Week 03 template [<a href="http://alpha.editor.p5js.org/mcb419/sketches/B13jM4BBf">open in editor</a>]</h2>
+
+  <user>Matt Zhang</user>
+
+  <pre>  <b>due date:</b> Tue Jan 30 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw03
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <h3>Introduction</h3>
+  <p>
+    In this assignment, you will use p5js to quantitatively analyze foraging efficiency. Your simulation will consist of a single agent foraging for food pellets in a confined environment. The agent wanders through the environment and consumes pellets.
+    <b>The goal of the assignment is to explore foraging efficiency as a 
+    function of wander noise.</b> Implement the following specifications by editing the javascript code. Once your code is working properly, click on the Run Experiment button below, then answer the questions at the bottom of the page. (HINT: with
+    solid walls and noise=0.2, the average number of pellets collected should be around 25.)
+  </p>
+
+  <pre style="color:darkBlue">    <b>canvas:</b> width=400, height=300
+    <b>boundaries:</b> wrapped or solid (with no bouncing)
+    <b>bot:</b> dia=30, speed=1.0, x<sub>0</sub>=width/2, y<sub>0</sub>=height/2, heading<sub>0</sub>=0
+    <b>pellets:</b> N=100, randomly distributed, treated as points, drawn as green dots
+    <b>controller:</b> wander, uniform random noise, <code>heading += noise * random(-1,1);</code>
+    <b>noise values to test:</b> [0.0, 0.1, 0.2, 0.5, 1.0, 2.0]
+    <b>foraging performance:</b> measured as the number of pellets collected in 2000 ticks
+    <b>number of trials:</b> repeat 10 trials for each value of wander noise
+    <b>statistics:</b> report MEAN ± STD ERR (a function called "calcArrayStats" has been provided for you)
+  </pre>
+
+
+  <div id="canvas"></div>
+  <button id="b_reset" style="background-color: lightBlue">Reset</button>
+  <button id="b_run" style="background-color: lightGreen">Run/Pause</button>
+  <button id="b_single" style="background-color: lightCyan">Single Step</button>
+  <button id="b_wrap" style="background-color: orange">Solid/Wrapped</button>
+  <br>
+  <input id="slider_wanderNoise" type="range" max="2" step="0.1" value="0.2">
+  <label id="text_wanderNoise">wanderNoise = 0.20</label>
+  <h3>Experiment Design and Control</h3>
+  <textarea id="specs" style="width:500px; height:80px">var noiseValues = [0.0, 0.1, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 1.0, 2.0];
+var ntrials = 10;
+var nsteps = 2000;
+  </textarea>
+  <br>
+  <button id="b_expt">Run Experiment</button>
+  <h4>Raw Data</h4>
+  <pre id="rawdata" style="color:blue">[will be filled automatically]</pre>
+  <h4>Summary Stats</h4>
+  <pre id="stats" style="color:blue">[will be filled automatically]</pre>
+  <br>
+
+
+  <h3>Questions</h3>
+  <ol>
+    <li> About how long did you spend on this assignment? <br>
+      <user>About 30 minutes.</user>
+    </li>
+    <li> For SOLID boundary conditions, what value for wanderNoise appears optimal? <br>
+      <user>wanderNoise between 0.2 and 0.5 appears to be optimal, since the bot has to turn around quite frequently to avoid walls.</user>
+    </li>
+    <li> Same question as above, but for WRAPPED conditions. Explain why this value is different.<br>
+      <user>wanderNoise = 0 is optimal. This is because by not turning at all (assuming the bot does not start at an angle divisible by 90 degrees) the bot can simply walk straight ahead and eventually cover the entire map.</user>
+    </li>
+    <li> For SOLID boundary conditions, about how many pellets are collected when noise is optimal? <br>
+      <user>About 25.</user>
+    </li>
+    <li> Same question as above, but for WRAPPED conditions. Explain why this value is different.<br>
+      <user>About 50 pellets. The bot is able to collect more pellets because it doesn't have to waste any time backtracking and trying to avoid walls.</user>
+    </li>
+    <li> (Optional) Feel free to modify and explore the model on your own. For example, you might try a 
+      finer sampling of noise voises to better ascertain the peak, or more trials per value, etc. Use the 
+      space below to summarize any interesting observations or comment on what your learned.<br>
+      <user>wanderNoise = 0.35 appears to be the best for solid boundary conditions. As expected, the optimal value increases as bot speed increases, since the bot needs to turn more frequently. At bot speed=5, the optimal value rises to 0.7.</user>
+    </li>
+  </ol>
+
+  <p>END OF ASSIGNMENT<br>&nbsp;</p>
+
+
+</body></html>
