@@ -1,0 +1,129 @@
+<!DOCTYPE html><html><head>
+  <title>HW 05 template</title>
+
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Bot.js"></script>
+  <script src="Light.js"></script>
+  <script src="Trail.js"></script>
+  <script src="World.js"></script>
+  <script src="sketch.js"></script>
+</head>
+
+<body>
+  <h2>Week 05 template [<a href="http://alpha.editor.p5js.org/mcb419/sketches/BkyFDgLLz">open in editor</a>]</h2>
+
+  <pre>  <b>due date:</b> Tue Feb 13 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw05
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+  
+  <p>
+  Matt Zhang
+  <br><br>
+  Last 3 digits of UIN:
+  <br>
+  <input id="studentID" value="258" size="4" readonly="">
+  <br>
+  </p>
+
+
+  <h3>Introduction</h3>
+  <p>In this assignment you will explore different types of Braitenberg vehicles. 
+  The simulation environment has been provided for you. 
+  The only thing that you will need to change is the controller code for the different types of Braitenberg vehicles.
+  <b>The main goal of the assignment is to understand how the controller architecture (crossed vs. uncrossed, 
+  excitatory vs. inhibitory) and controller parameters (gain and offset) influence the observed behaviors.</b>  
+  </p>
+
+  
+  <div id="canvas"></div>
+  <select id="controller"></select>
+  <button id="b_reset" style="background-color: lightBlue">Reset</button>
+  <button id="b_run" style="background-color: lightGreen">Run/Pause</button>
+  <button id="b_single" style="background-color: lightCyan">Single Step</button>
+  <br>
+  
+  <h3>Description</h3>
+  <p>
+  The bots have two light sensors (snsL, snsR) 
+    and two motors (mtrL, mtrR). 
+   Sensor activation follows an inverse-square law.
+   Motor activation corresponds to wheel velocity in pixels per tick. 
+   </p>
+  <p>Your controller code in Bot.js should have the following form:
+   </p><blockquote>
+  <code>this.mtrL = OFFSET + GAIN * this.sns(L/R)<br>
+  this.mtrL = OFFSET + GAIN * this.sns(L/R)</code>
+   </blockquote>
+   where OFFSET and GAIN are constant values. OFFSET must be positive.
+   GAIN can be positive (excitatory) or negative (inhibitory). You should
+   hardcode GAIN and OFFSET as numeric values, you don't need to create
+   variables using those names.
+  <p></p><p>
+  
+   The OFFSET determines the motor speed with no sensor input (e.g., when the bot is far from all light sources).
+   The GAIN determines how strongly the sensors influence the motors. Your controller code should not manipulate
+   any other bot parameters. It should use the sensor values to set the motor values, and nothing more. The base
+   code will take care of everything else. 
+   (The base code limits the overall bot speed to 5 pixels/tick, and the overall turning rate to 0.1 radians/tick.)
+   </p><p>
+   <b>Your controllers must use just 2 lines of code, as shown above.
+  <br>You cannot use "if" statements in your code!
+  <br>Each controller must agree with Braitenberg's description of the
+    architecture (crossed vs. uncrossed, excitation vs. inhibition)</b>
+  </p><p>
+  
+  The base code will automatically score the behavior as 
+    "PASSED" or "FAILED", based on criteria that must be met in the first
+    1000 ticks of the simulation. Detailed scoring criteria can be found in
+    the World.js file.
+  </p>
+    
+  <h3>Instructions</h3>
+  <ol>
+    <li>After duplicating the template file, edit the section at the top of
+      index.html to supply your name and last 3 digits of your UIN.
+      The simulation will not run until you enter a valid 3-digit ID.
+      
+    </li><li>Implement <b>aggressive (red)</b>: 
+    bots should repeatedly "hit" the light; 
+    there should be at least 8 total "hits" in the first 1000 ticks 
+
+    </li><li>Implement <b>coward (yellow)</b>:
+    bots should "flee" from the light; 
+    trajectories should generally remain outside of the yellow circle;
+    bots should move slowly (speed &lt; 0.25) when outside of the yellow circle
+
+    </li><li>Implement <b>love (blue)</b>: 
+    bots should approach the light and come to a stop with their midpoint
+    positioned between the red and blue reference circles 
+
+    </li><li>Implement <b>explorer (magenta)</b>:
+    bots should move quickly when they are outside of the yellow circle
+    (speed &gt; 2); trajectories should sometimes enter the blue cirlce, 
+    but not enter the red circle
+    </li>
+  
+  </ol>
+  <h3>Questions</h3>
+  <ol>
+  <li> About how long did you spend on this assignment? <br>
+      <user>About half an hour.</user>
+  </li>
+  <li> Which controller was the most challenging to implement? Why? <br>
+      <user>The aggressive one required the most tuning, because I had to make sure that the bots were traveling fast enough to cover ground, but not so fast that they couldn't turn quickly enough to hit the target.</user>
+  </li>
+  </ol>
+  
+  
+
+  
+
+  <p>END OF ASSIGNMENT<br>&nbsp;</p>
+
+
+</body></html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html><html><head>
+  <title>HW 4 template</title>
+
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <script src="p5.sound.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Bot.js"></script>
+  <script src="World.js"></script>
+  <script src="sketch.js"></script>
+  <script src="util419.js"></script>
+  <script src="sprintf.js"></script>
+</head>
+
+<body>
+  <h2>Week 04</h2>
+  <user>Matt Zhang</user>
+
+  <pre>  <b>due date:</b> Tue Feb 6 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw04
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <h3>Introduction</h3>
+  <p>In this assignment you will implement several different forms of kinesis behavior.
+  <b>The goal is to understand how different behavioral stragegies influence the distribution 
+    of agents in a non-uniform environment.</b>
+  </p><p>
+  The red/blue pattern below represents some physical parameter of the environment
+    that varies across space. 
+  It could represent nutrient density, light intensity, temperature, pH, etc.
+  For convenience, we will refer to it as temperature, and interpret the red regions as hot and the blue regions as cold.
+  The maximum temperature is 1 and the minimum temperature is 0.
+  </p>
+  <p> There are 100 agents in the environment. If they are randomly distributed, we expect
+    the mean temperature of the population to be about 0.5, averaged across all agents.
+    If the agents tend to congregate in warmer regions, then the mean temperature of the 
+    population will be higher. 
+  </p><p>You will implement 5 different behavioral strategies: 3 that cause agents to congregate
+    in warm regions (orthokinesisNeg, klinokinesisPos, and runTumble) and 2 that
+    cause agents to congregate in cold regions (orthokinesisPos, klinokinesisNeg).
+  Specific instructions are provided at the bottomm of the page.
+  </p>
+
+  
+  <div id="canvas"></div>
+  <select id="controller"></select>
+  <button id="b_reset" style="background-color: lightBlue">Reset</button>
+  <button id="b_run" style="background-color: lightGreen">Run/Pause</button>
+  <button id="b_single" style="background-color: lightCyan">Single Step</button>
+  <label>faster: &nbsp;</label><input id="faster" type="text" size="3">
+  <br>
+  <h3>Experiment Control</h3>
+  <p>Click the button below to run through all the controllers.</p>
+  <button id="b_expt">Run Experiment</button>
+  <pre id="stats" style="color:blue">[will be filled automatically]</pre>
+  <br>
+  
+  <h3>Instructions</h3>
+  <p>
+  You will be editing controller code in Bot.js. A controller gets sensory input 
+  from the environment and generates motor output to influence behavior. To get the
+    sensed temperature, <code>tsns</code>, at the bot's current location use:<br>
+  <code>let tsns = world.getTemperature(this.x, this.y);</code><br>
+  To generate motor output, set the values of:<br>
+  <code>this.speed</code> and <code>this.turnAngle</code>.
+  </p>
+  <ol>
+    <li>The wander controller has been provided for you. Run 2000 steps of the wander controller.
+      What was the mean value of the temperature that you observed?<br>
+      <user>The mean temp was 0.50.</user>
+    </li>
+    <li>In Bot.js, a simple positive-orthokinesis controller has been provided for you.
+      For positive orthokinesis, the bot moves faster in warmer areas of the environment.
+      In this simple implementation,the speed of the bot increases linearly with 
+      temperature. 
+      What was the mean temperature that you observed?<br>
+      <user>The mean temp was 0.34.</user>
+    </li>
+    <li>Now modify the orthokinesisPos controller to make it more effective, such that
+      the average temperature of the population is <u>less than 0.25</u> after 2000 steps.
+      Implement a strategy where the speed is 0 when the temperature is below some
+      threshold value and is 1 when the temperature is above that value. 
+      What threshold value did you use, and what was the average temperature?<br>
+      <user>With a threshold of 0.15, I get an average temperature of 0.13.</user>
+    </li>
+    <li>A simple negative-orthokinesis controller has been provided for you.
+      For negative orthokinesis, the bot moves slower in warmer areas of the environment.
+      In this simple implementation,the speed of the bot decreases linearly with 
+      temperature. 
+      What was the mean temperature that you observed?<br>
+      <user>The mean temp was 0.62.</user>
+    </li>
+    <li>Now modify the orthokinesisNeg controller to make it more effective, such that
+      the average temperature of the population is <u>greater than 0.75</u> after 2000 steps.
+      Implement a strategy where the speed is 1 when the temperature is below some
+      threshold value and is 0 when the temperature is above that value. 
+      What threshold value did you use, and what was the average temperature?<br>
+      <user>With a threshold of 0.85, I get an average temperature of 0.84.</user>
+    </li>
+    <li>Now implement the run-tumble controller. The bot speed should always be 1.
+      The turn angle should be 0 if the current temperature is greater than the temperature
+      on the previous time step. The turn angle should be <code>PI * random(-1, 1)</code>
+      otherwise.  You'll need to use <code>this.memory</code> to store information
+      about the temperature on the previous time step. 
+      When your controller is working properly, the
+      average temperature should be <u>greater than 0.75</u> after 2000 steps.
+      What was the average temperature that your controller was able to achieve?<br>
+      <user>I got an average temperature of 0.76.</user>
+    </li>
+    <li>A simple positive-klinokinesis controller has been provided for you.
+      For positive klinokinesis, the bot turnAngle is larger in warmer areas of the environment. 
+      What was the mean temperature that you observed?<br>
+      <user>The mean temp was 0.51.</user>
+    </li>
+    <li>A simple negative-klinokinesis controller has been provided for you.
+      For negative klinokinesis, the bot turnAngle is smaller in warmer areas of the environment. 
+      What was the mean temperature that you observed?<br>
+      <user>The mean temp was 0.47.</user>
+    </li>
+    <li>Why do you think that the simple klinokinesis controllers above are 
+        relatively ineffective at causing the bots to congregate?<br>
+      <user>The bots turn randomly, and not necessarily towards the direction they want to go in.</user>
+    </li><li>[OPTIONAL] Try to design more effective versions of the two klinokinesis contollers.
+      You should leave the bot speed fixed at 1 and only change the turning behavior.
+      If needed, you can use the memory variable to store information, but do not
+      explicitly store the temperature on the previous time step. If you are successful
+      at getting the bots to congregate, describe your controller strategy below.<br>
+      <user>Threshold-based kliokinesis controllers did the trick. I had the bugs rotate PI * random(-1, 1) radians, but only if the temperature was above 0.8 for the positive kliokinesis controller or less than 0.2 for the negative one.</user>
+    </li><li> About how long did you spend on this assignment? <br>
+      <user>About 30 minutes.</user>
+    </li>
+  </ol>
+  
+  
+
+  <p>END OF ASSIGNMENT<br>&nbsp;</p>
+
+
+</body></html>
