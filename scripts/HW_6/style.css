@@ -1,0 +1,59 @@
+body {
+  font-family: sans-serif;
+  color: black;
+}
+
+button {
+  margin: 5px;
+  padding: 5px;
+}
+
+canvas {
+  margin: 0px 10px 10px
+}
+
+code {
+  font-family: Courier;
+  color: green;
+}
+
+div {
+  margin: 10px
+}
+
+li {
+  margin-bottom: 12px;
+}
+
+pre {
+  font-family: monospace;
+  line-height: 130%;
+}
+
+textarea {
+  font-size: 16px
+}
+
+user {
+  color: red;
+}
+
+#all {
+  font-size: 14;
+  color: LightGray;
+}
+
+#best {
+  font-size: 20;
+  color: Blue;
+  margin-left: 20px;
+}
+
+#plot {
+  background: #EEF;
+}
+
+#stats {
+  font-size: 20;
+  color: Green;
+}
