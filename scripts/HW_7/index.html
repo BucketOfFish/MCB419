@@ -1,0 +1,123 @@
+<!DOCTYPE html><html><head>
+  <title>HW 7 template</title>
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Bot.js"></script>
+  <script src="Trail.js"></script>
+  <script src="sim.js"></script>
+  <script src="DNA.js"></script>
+  <script src="Graph.js"></script>
+  <script src="Population.js"></script>
+  <script src="sketch.js"></script>
+</head>
+
+<body>
+  <h2>HW 7 template - evolve <i>C. elegans</i>
+  [<a href="http://alpha.editor.p5js.org/mcb419/sketches/H1PXlXoDG">open in editor</a>]</h2>
+  <pre>  <b>due date:</b> Tue Feb 27 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw07
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+  <user>Matt Zhang</user>
+  <p>In this assignment, you will evolve a gene-based <i>C. elegans</i> controller that is able to function over a wide range of stimulus conditions. The controller will be tested in three different intensity ranges (peak concentrations = 0.1, 1.0, and 10.0).
+  </p>
+  <p>The bot attributes that you will need for your controller are:
+    </p><ul>
+      <li><code>this.sns</code> - attractant concentration at the nose of the worm
+      </li>
+      <li><code>this.v</code> - membrane voltage of a low-pass-filter neuron
+      </li>
+      <li><code>this.heading</code> - heading dirction; motor output
+      </li>
+      <li><code>this.genes</code> - array of gene values
+      </li>
+    </ul>
+  The bot speed will be fixed at 1.0. The fitness value is the sum 
+  of the normalized attractant concentration experienced by the worm.
+  If the worm spends 1000 ticks at 100% of peak concentration, the fitness would
+  be 1000. If the worm spends 1000 ticks at 50% of peak concentration, 
+  the fitness would be 500. 
+  The more time the worm spends near the peak, the higher the fitness.
+  <p></p>
+  <p>The testing environment will consist of 1000 ticks in an
+    environment with peak concentration of 0.1, 1000 ticks with
+    a peak of 1.0 and 1000 ticks with a peak of 10.0. The worm
+    is repositioned near the edge of the gradient between trials.
+    The maximum fitness would be 3000, if the bot was
+    located at the peak the entire time. You should aim for an 
+    average fitness above 2400.
+  </p>
+  <div id="canvas"></div>
+  <textarea id="specs" style="width:600px; height:40px">bot.genes = [1, 2, 3, 4];
+    </textarea>
+  <br>
+  <button id="b_reset" style="background-color: lightBlue">Reset</button>
+  <button id="b_run" style="background-color: lightGreen">Run/Pause</button>
+  <button id="b_single" style="background-color: lightCyan">Single Step</button>
+  <button id="b_expt" style="background-color: pink">Run Expt</button>
+  <label>peak: &nbsp;</label><input id="peak" type="text" size="3" value="1">
+  <pre id="outp"></pre>
+  <hr>
+  <h3>GA evolution</h3>
+  <textarea id="ga_specs" style="width:500px; height:100px">popSize = 10;
+crossoverRate = 0.0; // per reproduction
+mutationRate = 0.0; // per reproduction
+lowerBound = [0, 0, 0, 0];
+upperBound = [0, 0, 0, 0];
+  </textarea>
+  <br>
+  <button id="ga_reset">GA Reset</button>
+  <button id="ga_run">GA Run</button>
+  <button id="ga_load">GA Load Best</button>
+  <div id="best"></div>
+  <hr>
+  <p>Fitness vs generation:</p>
+  <canvas id="fig1" width="400" height="300"></canvas>
+  <div id="stats"></div>
+  <div id="all"></div>
+  <h3>Instructions</h3>
+  <ol>
+    <li>Edit the Bot controller() code to implement the following gene-based algorithm:<br>
+       <br>a) use 4 genes: let g = this.genes; g[0] is a time constant, g[1]-g[3] are weights (see below)
+        <br>b) low-pass filter (this.v) update rule: this.v += (this.sns - this.v)/g[0]
+        <br>c) weighted sum (local variable) let w = g[1]*this.sns + g[2]*this.v + g[3];
+        <br>d) output nonlinearity (right-turn only): this.heading += constrain(w, 0, 0.1); 
+    </li>
+    <li>In the GA textbox, choose initial values of popSize, crossoverRate,
+        mutationRate, and specify the lower/upper bounds.
+      Hint: the time constant must be positive; g[3] will be much smaller in magnitude than
+      g[1] and g[2].
+       Click "GA Reset" and then "GA Run."
+      Evolution will stop automatically after 100 generations. You can stop earlier by 
+      clicking the "GA Run" button again.
+      If necessary, readjust parameters and re-evolve until you are able to achieve a best
+      fitness greater than 2600 and an average fitness greater than 2400.
+      What are the Best genome and Best fit values that you obtained (shown in blue)?<br>
+      <user>Best gene: [ 21.91, -18.19, 18.52, 0.06 ]</user><br>
+      <user>Best fit: 2745.21 (should be greater than 2600) </user><br>
+      <user>Avg fit: 2475.37 (should be greater than 2400) </user>
+    </li>
+    <li>Click "GA Load Best" to transfer this genome to the upper dialog box. 
+      Set the peak intensity to 1, then click
+      "Reset" and "Run/Pause". Describe the bot behavior. Does the shape
+      of the trajectory depend on the worm's initial heading direction? (click
+      "Reset" multiple times to pick different random initial headings.)<br>
+      <user>The worm spirals inward towards the center. At the middle it turns in tiny circles. If it starts out facing away from the center, it will travel to the edge of the circle first before turning around.</user>
+    </li>
+    <li> Try different values of peak concentration (0.1, 1, 10.0). Does the
+      peak concentration have an influence on the general shape
+      of the trajectory?<br>
+      <user>Surprisingly, the worm does not appear to behave much differently when the gradient is changed by orders of magnitude. Perhaps when the peak is larger the worm tends not to aim directly for the circle center when turning, but rather to the side a little.</user>
+    </li>
+    <li>How would you characterize this evolved strategy in terms of the various 
+      forms of kinesis and taxis that we have discussed in class?<br>
+      <user>This is adaptive klinokinesis. I don't think this is a form of taxis because the turning is not really "directed" towards the peak.</user>
+    </li>
+  </ol>
+  <p>End of assignment</p>
+
+
+</body></html>
