@@ -1,0 +1,118 @@
+<!DOCTYPE html><html><head>
+  <title>HW 08 template</title>
+
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Bot.js"></script>
+  <script src="Pellet.js"></script>
+  <script src="Trail.js"></script>
+  <script src="sketch.js"></script>
+  <script src="util419.js"></script>
+  <script src="sprintf.js"></script>
+</head>
+
+<body>
+  <h2>HW 08 template [<a href="http://alpha.editor.p5js.org/mcb419/sketches/Sym-FEMdG">open in editor</a>]</h2>
+
+  <pre>  <b>due date:</b> Tue Mar 6 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw08
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <user>
+    Matt Zhang
+  </user>
+
+
+  <h3>Introduction</h3>
+  <p>This assignment combines elements of action selection, finite-state machines (FSM), and area-restricted search (ARS) behavior. 
+    The goal is to develop a controller that collects as much energy as possible (100 max) in a fixed time period (2000 ticks).
+    You will use an FSM controller to select among different stand-alone action patterns (behaviors)
+    to achieve the desired performance. 
+  </p>
+
+  <div id="canvas"></div>
+  <select id="controller"></select>
+  <button id="b_reset" style="background-color: lightBlue">Reset</button>
+  <button id="b_run" style="background-color: lightGreen">Run/Pause</button>
+  <button id="b_single" style="background-color: lightCyan">Single Step</button>
+  <br>
+  <h3>Experiment Control</h3>
+  <p>Click the button below to run through all the controllers.</p>
+  <button id="b_expt">Run Experiment</button>
+  <pre id="stats" style="color:blue">[will be filled automatically]</pre>
+  <br>
+
+  <h3>Scenario description</h3>
+  <p style="font-size: 80%">
+    <b>Pellets</b>
+    <br>green pellets - randomly distributed; can be detected at a distance; worth 1 point each; 20 pellets = 20 points
+    <br>invisible pellets - clustered; can only be detected by running into them; worth 5 points each; 16 pellets = 80 points
+    <br><b>Bot sensory inputs</b>
+    <br>bot.sns.left, bot.sns.right = intensity of green pellet scent (Braitenberg-style);
+    <br>bot.sns.collision = true when the bot hits a boundary; false otherwise
+    <br>bot.sns.deltaEnergy = energy gained on previous time step (+1 for green pellets, +5 for invisible pellets, 0 otherwise)
+    <br><b>Bot motor outputs</b>
+    <br>bot.mtr.left, bot.mtr.right = motor velocity (Braitenberg-style)
+    <br><b>Sample controllers</b>
+    <br>aggressive - a Braitenberg crossed-excitation wiring pattern
+    <br>spiral - a sample spiral (non-optimal)
+    <br>wander - random wandering
+    <br>fsm1 - a finite-state machine that 'wanders' by default and 'spins' when it hits a boundary
+    <br>fsm2 - you will use this slot to implement your own controller
+    <br>&nbsp;
+  </p>
+
+  <h3>Instructions</h3>
+  <p>
+   Develop and test a new FSM-based controller (fsm2) that effectively collects energy 
+   from the environment. Your target performance should be an average of 80 energy-points, 
+    or better, collected in 2000 ticks.  
+   (The best controllers from last year achieved results over 90.)
+    Use 'Run Experiment' to collect statistics.
+  </p><p>
+   Part of your policy must include an area-restricted search (ARS) behavior that is 
+   triggered when the bot encounters an invisible pellet; the suggested ARS pattern 
+   is an outward spiraling trajectory that is likely to hit other invisible pellets 
+   (<a href="http://www.life.illinois.edu/mcb/419/sketches/week08_hw_template/default.png">example trajectory</a>).
+  </p><p>
+   You will need to code individual state behaviors as stand-alone controller methods. 
+   Your FSM-code can make use of the provided stand-alone controllers 
+  (aggressive, spiral, and wander), which you are free to modify, and you can add additional new
+  stand-along controllers of you own design.
+   These stand-alone "building blocks" should only implement the specific behavior; 
+   they should not include the decisison-making rules on when to transition to a different state. 
+   All of the transition rules should be in your fsm2 code. More details will be provided in class.
+  </p><p>
+  NOTE: Only edit code in <code>Bot.js</code>. 
+  (You can also add new states to <code>controllerNames</code>
+  at the top of <code>sketch.js</code>.) Your controller should not use any information that is not available to the bot through 
+  its sensors (do not access bot position, bot heading, pellet position, etc.).
+  </p>
+  <h3>Questions</h3>
+  <ol>
+    <li>List the individual "states" that you used in your fsm2 controller, with a one-line description of what each state does.<br>
+      <user>Aggressive - makes a beeline for the nearest green dot in sight. Spiral - spins around in tight circles. TightSpiral - makes a smaller, shorter spin. Spin - rotates to face a different direction. Wander - walks around aimlessly.</user>
+    </li>
+    <li>For N states there are N<sup>2</sup> possible transition rules (allowing for states to transition to themselves). 
+      How many of those transitions were actually allowed by your fsm2 code?<br>
+      <user>I have 5 states with 9 distinct transitions between states.</user>
+    </li>
+    <li>What part of the controller design and implementation did you find most challenging in this week's assignment?<br>
+      <user>Tuning the spiral was definitely the most difficult part.</user>
+    </li>
+    <li>[Optional] Design a minimal FSM controller <code>fsm3</code> that 
+      meets the performance goals using as few states and transisitions as 
+      possible. How many states and transitions did you use? Did your solution
+      implement some form of area-restricted search?<br>
+      <user>My minimal controller is able to meet the performance goals using 3 states and 4 transitions. The bot would begin an area-restricted search each time after eating an invisible pellet.</user>
+    </li>
+  </ol>
+
+  <p>END OF ASSIGNMENT<br>&nbsp;</p>
+
+
+</body></html>
