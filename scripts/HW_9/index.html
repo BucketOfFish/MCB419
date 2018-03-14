@@ -1,0 +1,103 @@
+<!DOCTYPE html><html><head>
+  <title>HW 09 template</title>
+
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Axon.js"></script>
+  <script src="LightSensor.js"></script>
+  <script src="Motor.js"></script>
+  <script src="Neuron_IAF.js"></script>
+  <script src="sketch.js"></script>
+</head>
+
+<body>
+  <h2>HW 09 template [<a href="http://alpha.editor.p5js.org/mcb419/sketches/SyFIr6auM">open in editor</a>]</h2>
+
+  <pre>  <b>due date:</b> Tue Mar 13 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw09
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <user>
+    Matt Zhang
+  </user>
+
+
+  <h3>Introduction</h3>
+  <p>
+    This week’s homework explores the use of spike-based models in visuomotor circuits. 
+    You will be implementing two neural circuits for place-code to rate-code conversion from Fig. 3 of the paper by 
+    <a href="http://www.life.illinois.edu/mcb/419/pdf/Sarvestani12_lamprey.pdf">Kamali-Sarvestani et al.(2012)</a>.
+  </p>
+  <p>
+    To get started, you should review the <a href="http://alpha.editor.p5js.org/mcb419/sketches/BJaIM36df">Braitenberg spiking demo</a>
+    and understand how it works. Then you can move on to the main part of the assignment decribed here. 
+    You need to complete the wiring diagram for two cases: prey and predator, as controlled by the ‘predator/prey’ 
+    checkbox in the user interface. 
+    Specifically, in sketch.js, you need to edit the functions
+    <br><code>add_connections_for_prey_approach()</code> and
+    <br><code>add_connections_for_predator_escape()</code>.
+  </p>
+
+  <h3>Assignment</h3>
+  <p>
+    <b>Part 1) Implement Circuitry for Prey Approach Mode</b><br> Based on Fig. 3A, complete the wiring diagram and specify appropriate connection weights, such that a wheeled vehicle would display an appropriate orienting response to prey.
+    </p><ul>
+      <li>
+        When the prey is located near the midline (between sensors SL8 and SR8), 
+        both wheels should turn at approximately the same speed.
+        This would correspond to a straight approach toward the prey.
+        <i>The wheel velocities should be roughly between 0.05 and 0.15 rad/sec.</i>
+      </li>
+      <li>
+        When the prey is positioned to the far left (in front of sensor SL1), 
+        the right wheel should turn much faster than the left wheel, 
+        which would correspond to a sharp turn toward the left, toward the prey.
+        <i>The right wheel velocity should be roughly between 0.2 and 0.5 rad/sec,
+          and the left wheel velocity should be less than 0.05 rad/sec</i>
+      </li>
+      <li>
+        When the prey is positioned to the far right (in front of sensor SR1), 
+        the left wheel should turn much faster than the right wheel, 
+        which would correspond to a sharp turn toward the right, toward the prey.
+        <i>The left wheel velocity should be roughly between 0.2 and 0.5 rad/sec,
+          and the right wheel velocity should be less than 0.05 rad/sec</i>
+      </li>
+    </ul>
+  <p></p>
+
+  <p>
+    <b>Part 2) Implement Circuitry for Predator Escape Mode</b><br> Based on Fig. 3B, complete the wiring diagram and specify appropriate connection weights, such that a wheeled vehicle would display an appropriate orienting response to a predator.
+    </p><ul>
+      <li>
+        When the predator is positioned just to the right of the midline (in front of sensor SR8), 
+        the wheels should turn quickly and the right wheel should turn faster than the left wheel, 
+        which would correspond to a fast turn to the left, away from the predator.
+        <i>The right wheel velocity should be roughly between 0.2 and 0.5 rad/sec,
+          and the left wheel velocity should be less than 0.2 rad/sec</i>
+      </li>
+      <li>
+        When the predator is positioned further to the right in front of sensor SR1, 
+        the wheels should turn slowly and the right wheel should turn faster than the left wheel, 
+        which would correspond to a gradual turn to the left, away from the predator.
+        <i>The right wheel velocity should be roughly between 0.1 and 0.2 rad/sec,
+          and the left wheel velocity should be less than 0.05 rad/sec</i>
+      </li>
+      <li>
+        Similar relationships hold on the left side.
+      </li>
+    </ul>
+  <p></p>
+
+  <div id="canvas"></div>
+  <div id="gui"></div>
+<p>
+  END OF ASSIGNMENT<br>
+  &nbsp;<br>
+</p>
+
+
+</body></html>
