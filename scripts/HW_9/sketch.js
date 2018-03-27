@@ -84,16 +84,16 @@ function add_connections_for_prey_approach() {
 
 	// response to auxillary layer
 	for (let i = 1; i <= 8; i++) {
-    for (let j = i; j <= 8; j++) {
-			axons.push(new Axon("RL" + i, "AL" + j, 0.2));
-			axons.push(new Axon("RR" + i, "AR" + j, 0.2));
-    }
+        for (let j = i; j <= 8; j++) {
+                axons.push(new Axon("RL" + i, "AL" + j, 20));
+                axons.push(new Axon("RR" + i, "AR" + j, 20));
+        }
 	}
 
 	// auxillary layer to motors
 	for (let i = 1; i <= 8; i++) {
-		axons.push(new Axon("AL" + i, "MR", 0.2));
-		axons.push(new Axon("AR" + i, "ML", 0.2));
+		axons.push(new Axon("AL" + i, "MR", 0.004));
+		axons.push(new Axon("AR" + i, "ML", 0.004));
 	}
 }
 
@@ -107,17 +107,18 @@ function add_connections_for_predator_escape() {
 
 	// response to auxillary layer
 	for (let i = 1; i <= 8; i++) {
-    for (let j = i; j <= 8; j++) {
-			axons.push(new Axon("RL" + i, "AL" + j, 0.2));
-			axons.push(new Axon("RR" + i, "AR" + j, 0.2));
-    }
+        for (let j = i; j <= 8; j++) {
+                axons.push(new Axon("RL" + i, "AL" + j, 20));
+                axons.push(new Axon("RR" + i, "AR" + j, 20));
+        }
 	}
 
 	// auxillary layer to motors
 	for (let i = 1; i <= 8; i++) {
-		axons.push(new Axon("AL" + i, "ML", 0.2));
-		axons.push(new Axon("AR" + i, "MR", 0.2));
-	}}
+		axons.push(new Axon("AL" + i, "ML", 0.004));
+		axons.push(new Axon("AR" + i, "MR", 0.004));
+	}
+}
 
 //--------------
 // MAIN LOOP 
