@@ -1,0 +1,115 @@
+<!DOCTYPE html><html><head>
+  <title>HW 11 template</title>
+
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Bot.js"></script>
+  <script src="Pellet.js"></script>
+  <script src="Trail.js"></script>
+  <script src="World.js"></script>
+  <script src="sketch.js"></script>
+  <script src="util419.js"></script>
+  <script src="sprintf.js"></script>
+</head>
+
+<body>
+  <h2>Week 11 template [<a href="http://alpha.editor.p5js.org/mcb419/sketches/HymWbPFYG">open in editor</a>]</h2>
+
+  <pre>  <b>due date:</b> Tue Apr 3 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw11
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <user>
+    Matt Zhang
+  </user>
+
+
+  <h3>Introduction</h3>
+  <p>
+    This assignment combines elements of associative learning (associating pellet color with reward ), estimating reward values using the delta rule, and implementing action policies based on estimated reward values. In this assignment, a single bot forages
+    for RED, GREEN and BLUE pellets. The different colors will have different reward values. Your bot needs to learn the expected value of the different colors, and implement an efficient foraging strategy using that information. The objective is to collect
+    as much energy as possible in a fixed time period.
+  </p>
+
+
+  <div id="canvas"></div>
+  <select id="controller"></select>
+  <button id="b_reset" style="background-color: lightBlue">Reset</button>
+  <button id="b_run" style="background-color: lightGreen">Run/Pause</button>
+  <button id="b_single" style="background-color: lightCyan">Single Step</button>
+  <br>
+  <h3>Experiment Control</h3>
+  <p>Click the button below to run through all the controllers.</p>
+  <button id="b_expt">Run Experiment</button>
+  <pre id="stats" style="color:blue">[will be filled automatically]</pre>
+  <br>
+
+  <h3>Description</h3>
+  <p style="font-size: 80%">
+    <b>Pellets:</b>
+    <br>pellets - 10 each of red, green, and blue; randomly distributed; can be detected at a distance;
+    <br>pellet values - pellet colors are randomly assigned to 3 categories: Best, Neutral, Worst
+    <br>-- Best: 90% of pellets return a reward of +4, 10% return a reward of -4
+    <br>-- Neutral: 50% return +4, 50% return -4
+    <br>-- Worst: 10% return +4, 90% return -4
+    <br><b>Bot sensory inputs:</b>
+    <br>bot.sns.left/right = a 1-d array [snsR, snsG, snsB] returning the sensed intensity for each pellet color (Braitenberg-style);
+    <br>bot.sns.collision = true when the bot hits a boundary; false otherwise
+    <br>bot.sns.deltaEnergy = energy gained on previous time step
+    <br>bot.sns.lastColorConsumed = a string ("red", "green", "blue") indicating the color of the last pellet consumed
+    <br><b>Bot motor output:</b>
+    <br>bot.mtr.left/right = motor velocity (Braitenberg-style);
+    <br><b>Controllers:</b>
+    <br>seekRed - seeks red pellets, ignores other colors
+    <br>seekGreen - seeks green pellets, ignores other colors
+    <br>seekBlue - seeks blue pellets, ignores other colors
+    <br>seekAll - seeks all pellets by using sum of R,G,B sensors
+    <br><b>seekUser - this is the controller that you will develop</b>
+    <br>&nbsp;
+  </p>
+
+
+  <h3>Instructions</h3>
+  <p>
+    First, run the provided controllers and understand how they work. 
+    Next, using the <b>seekAll</b> controller for testing, modify the 
+    <code>updateEstimates()</code> Bot method to update the bot's 
+    <code>estimatedValue</code> array using the delta rule as the 
+    bot consumes pellets. 
+    The estimatedValue array has three elements for the estimated values of 
+    red, green and blue pellets respectively. 
+    The values that you store in this array will be displayed 
+    automatically in the upper left corner of the canvas.
+  </p>
+  <p>
+    Once your estimates are being computed correctly, then write your own Bot controller
+    code <code>seekUser()</code> to use the estimated values in a way that optimizes 
+    foraging performance. <b>You should be able to reliably achieve scores over 200.</b>
+  </p>
+
+  <h3>Questions:</h3>
+  <ol>
+    <li>Given the reward probabilities specified above, what is the computed ("experimental") value for the average reward for each color category? <br> BEST:
+      <user>3.36</user>, NEUTRAL:
+      <user>0.09</user>, WORST:
+      <user>-3.00</user>
+    </li>
+    <li>What learning rate did you use for your delta rule? How did you select this value?<br>
+      <user>I used 0.1 because it let me find the "true" values quickly while not allowing the values to jump around too much.</user>
+    </li>
+    <li>Briefly describe the controller strategy that you implemented. How did you use the estimated reward values to control the bot behavior?<br>
+      <user>I used a partition function with exp(beta * estimatedValue), where beta=3. This gave me a probability function that I used to decide whether to seek red, green, or blue pellets.</user>
+    </li>
+    <li>How well does your controller perform relative to the best single-color controller (e.g. seekCOLOR)? What do you think accounts for the difference in performance, if any?<br>
+      <user>It performs about one standard deviation lower, since my controller requires a bit of time to figure out which color is the best.</user>
+    </li>
+  </ol>
+
+  <p>END OF ASSIGNMENT<br>&nbsp;</p>
+
+
+</body></html>
