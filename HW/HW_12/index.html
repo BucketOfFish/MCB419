@@ -1,0 +1,136 @@
+<!DOCTYPE html><html><head>
+  <title>HW 12 template</title>
+
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8">
+  <script src="Bot.js"></script>
+  <script src="Grid.js"></script>
+  <script src="Qlearner.js"></script>
+  <script src="sketch.js"></script>
+  <script src="util419.js"></script>
+  <script src="sprintf.js"></script>
+</head>
+
+<body>
+  <h2>Week 12 template [<a href="http://alpha.editor.p5js.org/mcb419/sketches/rJy7eylsf">open in editor</a>]</h2>
+
+  <pre>  <b>due date:</b> Tue Apr 10 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw12
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <user>
+    Matt Zhang
+  </user>
+
+
+  <h3>Introduction</h3>
+  <p>This week we will use a reinforcement learning algorithm, called Q-learning, to find an
+  action selection policy for an agent foraging for pellets.
+  The formulation for the Q-learning algorithm can be found in the lecture slides.
+  The foraging task takes place in a grid world, as specified below.
+  </p>
+  <p style="font-size: 80%">
+    <b>Pellets:</b> 15 green (good, reward = +1), 15 blue (bad, reward = -1)
+    <br><b>Walls:</b> shown in gray; inpenetrable 
+    <br><b>Sensors:</b> the bot has 3 sensors (0 = front, 1 = left, 2 = right) indicating what is at that grid location
+    <br><b>Sensor values:</b> 0 = nothing, 1 = wall, 2 = good pellet, 3 = bad pellet
+    <br><b>Actions:</b> the bot has 3 actions; 0 = move forward, 1 = rotate left 90°, 2 = rotate right 90°
+    <br><b>States:</b> correspond to possible combinations of sensor values; since there are 3 sensors and each
+    sensor has 4 possible values there are 4*4*4 = 64 possible states.
+    <br><b>State value:</b> the state index (0-63) is computed as 16*sensor[2] + 4*sensor[1] + sensor[0]
+    <br><b>Q[state][action]:</b> a 64x3 array for storing learned action values; indexed by state (0-63) and action (0-2)
+    <br>&nbsp;
+  </p>
+  <div id="canvas"></div>
+  
+  <select id="controller"></select>
+  <button id="b_reset" style="background-color: lightBlue">Reset</button>
+  <button id="b_single" style="background-color: lightCyan">Single Step</button>
+  <button id="b_run" style="background-color: lightGreen">Run/Pause</button>
+  <br>
+  <h3>Experiment</h3>
+  <p>The button below runs 100 trials of each controller and 
+    displays results. Display Q will show selected Q values.
+    Reset Q will reinitialize the Q array (restart learning).</p>
+  <button id="b_expt">Run Experiment</button>
+  <button id="b_dispQ" style="background-color: tan">Display Q</button>
+  <button id="b_resetQ" style="background-color: pink">Reset Q</button>
+  <pre id="dispQ" style="color:blue"></pre>
+  <pre id="stats" style="color:blue">[will be filled automatically]</pre>
+  <br>
+
+  <h3>Instructions</h3>
+  <p> First, select <b>randAction</b> and click the "run/pause" button. 
+    After 2000 ticks, the energy collected by the bot should be around -20. 
+    This is because there is a energy cost of -0.01 on each time step, 
+    which corresponds to a cost of -20 over 2000 time steps; 
+    for random actions the bot is equally likely to run into green 
+    and blue pellets so the pellet rewards cancel out.
+  </p>
+  <p>Now, modify the <b>handCoded()</b> controller in Bot.js. 
+  This controller will not use any reinforcement learning; 
+  instead your should code it as a set of "condition-action" statements
+  that specify what action the bot should take for different sensor states 
+    (e.g., green pellet ahead, more forward; 
+    green pellet to the left, rotate left; etc.). 
+  You'll probably want to introduce some randomness into certain choices.  
+  As you develop your code, test the performance using the "Run Experiment" 
+    button; you should aim for a performance of at least 50. 
+    The best handcoded controllers in last year's class scored around 100.
+  </p>
+  <p>Before you can use Q learning, you have to implement 3 methods in Qlearner.js:
+    </p><pre>    bestAction(state) - return the best action for a given state
+    maxQ(state) - return the maximum Q value for a given state
+    updateQ(state, action, reward, nextState) - implement Q learning as presented in lecture
+  </pre>
+  After you've correctly implemented these functions, click "Reset Q" then click 
+  "Run Experiment" <b>twice</b>.
+  Look at the results in the table... you should see a Qlearner value greater than 55.
+  If not, you need to debug your Qlearner code.
+  <p></p>
+ <h3>Questions:</h3>
+ <br>
+  <p>
+  After training, click the "Display Q" button to examine selected values in the Q array, then
+    answer the following questions. Recall that
+    <br><code>state = 16*sensors[2].val + 4*sensors[1].val + 1*sensors[0].val</code>
+  </p>
+  <ol><li>Examine Q[0].  This corresponds to all sensors detecting "nothing."  What is the maximum Q value?
+    Why is this value greater than 0? 
+    <br><user>My maximum value is 0.008. This is greater than 0 because there is discounted future reward for a robot to keep moving.</user>
+  </li>
+    <li>Examine Q[2].  This corresponds to the front sensor detecting a green pellet.  What is the maximum Q value?
+      Why is this value greater than 1? What is the BEST action in this state?
+    <br><user>The max value is 1.005. This is greater than 1 because aside from eating the green pellet, there is also additional expected future reward from taking this action. The best action is to move forward and eat the pellet.</user>
+  </li>
+    <li>Examine Q[3].  What sensor configuration does this correspond to?  What is the WORST action in this state?
+    <br><user>This configuration corresponds to a blue pellet being in front of the robot. The worst move here would be to eat the pellet.</user>
+  </li>
+    <li>Examine Q[8].  What sensor configuration does this correspond to?  What action is optimal in this state?
+      What is the maximum Q value? 
+      Why is this maxQ value smaller than the maxQ value for Q[2]? 
+    <br><user>In this configuration we have a green pellet in front of the left sensor. The optimal action is to turn left, with a Q value of 0.395. This is not as high as when the pellet is right in front of the bot, because the reward is discounted by one turn.</user>
+  </li>
+    <li>Examine Q[20].  What sensor configuration does this correspond to?  Has this state ever been visited by the bot?
+      Why or why not?
+    <br><user>This state corresponds to a wall being on both the left and right side of the bot. This state has never been visited, due to not existing on this map.</user>
+  </li>
+    <li>Examine Q[32].  What sensor configuration does this correspond to?  What action is optimal in this state?
+    <br><user>This corresponds to a green pellet being on the bot's right. The optimal move is to turn right.</user>
+  </li>
+ 
+  <li>How did your "Qlearner" performance compare to your "handCoded" performance?  
+    If they are similar, why?  If they are different, why?
+    <br><user>The Q learner performed a bit better than my hand coded bot, because it spent less time running around in empty places. I think my hand coded bot turned left or right too often.</user>
+  </li>
+  </ol>
+
+
+  <p>END OF ASSIGNMENT<br>&nbsp;</p>
+
+
+</body></html>
