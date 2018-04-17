@@ -1,0 +1,104 @@
+<!DOCTYPE html><html><head>
+    <title>HW 13 template</title>
+    <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8">
+    <script src="cnnutil.js"></script>
+    <script src="convnet.js"></script>
+    <script src="deepqlearn.js"></script>
+    <script src="sketch.js"></script>
+  </head>
+  <body>
+  <h2>Week 13 template [<a href="http://alpha.editor.p5js.org/mcb419/sketches/SkBfUqcsf">open in editor</a>]</h2>
+  <pre>  <b>due date:</b> Tue Apr 17 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> hw13
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <user>
+    Matt Zhang
+  </user>
+  
+  <h3>Introduction</h3>
+  <p>This week we combine reinforcement learning with neural networks.  The important changes relative to last week are that
+    <br>(a) the state space is now continuous, rather than discrete and
+    <br>(b) Q values are estimated using a neural network, rather than a table.
+  </p>
+  <p>
+  For this exercise, we will use a simple video game scenario, where the goal is
+  to move a paddle left and right catch green pellets and avoid red pellets.
+  We follow the general approach given in this week's reading assingment:
+  <a href="http://www.life.illinois.edu/mcb/419/pdf/Mnih15_529-533.pdf">
+    Mnih V, et al. (2015) Human Level Control Through Deep Reinforcement Learning. Nature 518, 539-533</a>.
+   We will use the neural net library and reinforcement learning module documented here:
+   <a href="http://cs.stanford.edu/people/karpathy/convnetjs/demo/rldemo.html">ConvNetJS: Deep Q Learning Demo</a>
+  </p>
+  <p style="font-size: 80%">
+    <b>Pellets:</b> red value = -1; green value = +1
+    <br><b>Left/Right Sensors:</b> at each end of the paddle; provide information about distance to red and green pellets
+    <br><b>Sensor values:</b> computed as (30/dist); e.g., an object 30 pixels away has a value of 1
+    <br><b>Actions:</b> the bot has 3 actions; 0 = move left, 1 = move right; 2 = stop
+    <br><b>Network input:</b> the four sensor values [leftRed, leftGreen, rightRed, rightGreen]
+    <br><b>Network output:</b> estimated Q values for the 3 possible actions
+    <br><b>Network internal layers:</b> you decide    
+    <br>&nbsp;
+  </p>
+  <div id="canvas"></div>
+<div id="status" style="color: blue; margin-bottom: 20px"></div>
+  <div id="gui"></div>
+  <h3>Instructions</h3>
+  <p> First, select "randAction" and click the "run series" button.  Look in the results table and you should see a value around 8-9. 
+  </p>
+  <p>Before you can use reinforcement learning, you have to design your neural network by editing the code in the function
+  <b>resetBrain</b> found in <b>sketch.js</b>.
+  In particular, you'll need to specify one or more hidden layers, the number of neurons per layer, the type of activation function
+  in each layer ('relu', 'sigmoid', or 'tanh'). You may also want to change the associated parameters (epsilon, gamma, learning rate, batch_size, l2_decay, etc.) 
+  Note that <b>batch_size</b> has a big effect on the update rate... if you set it too large your simulation will run very slowly.
+   You'll probably want to repeat the training series multiple times until the 
+  performance is no longer improving.
+  Then you should select "testing" and then click "run series" to measure the final performance.
+  </p>
+  <p style="color:green"><b>NOTES:</b>
+    <br>Your target performance should be above 20.
+    <br>Save your best network directly into your HTML file by first clicking the "Save Network" button below, then copy-and-paste the network description from the textbox into the corresponding textarea section near the bottom of your HTML file.</p>
+
+ <h3>Questions:</h3>
+ <b>(provide answers in the body of your email, or in the HTML file, whichever you prefer)</b>
+ <ol>
+  <li>Did you remember to save your best network into your HTML file before submission?
+    <br><user>Yes, it's stored in the text box below.</user>
+   </li>
+  <li>What was the average fitness that you achieved for your best network?
+    <br><user>25.60</user>
+  </li>
+  <li>How many training trials did it take to achieve this performance?
+    <br><user>It took about 400 trials.</user>
+  </li>
+  <li>Briefly describe the network architecture that you found to be most effective(e.g., #layers, #neurons, activation functions).
+    <br><user>I found that three layers of 10 neurons each, with sigmoid activation functions, was most effective.</user>
+  </li>
+   <li>Describe any changes that you made to the other learning parameters (the "opt" values).
+     <br><user>The most important change I made was to greatly increase the learning rate, to 0.6. Changing all other parameters seemed to have very limited effect on the final score. I also changed the gamma to 0.93, so that the reward would be reduced by 50% going back 10 time steps.</user>
+  </li>
+  </ol>
+
+  <h3>Results Table</h3>
+  <table>
+    <tbody><tr><th>Controller</th><th>Fitness<br><small>mean (std dev)</small></th></tr>
+    </tbody><tbody id="table">
+    </tbody>
+  </table>
+  <h3>Load / Save network</h3>
+  <p>These buttons will load/save the network architecture temporarily using the text box below.
+  To save this information permanently, you would need to copy and paste the textbox contents
+  into the appropriate section of the index.html file. 
+  </p>
+  <div id="gui2"></div>
+  <br>
+  <textarea id="tt" style="width:100%; height:200px;">    {"layers":[{"out_depth":4,"out_sx":1,"out_sy":1,"layer_type":"input"},{"out_depth":10,"out_sx":1,"out_sy":1,"layer_type":"fc","num_inputs":4,"l1_decay_mul":0,"l2_decay_mul":1,"filters":[{"sx":1,"sy":1,"depth":4,"w":{"0":1.1164256263313383,"1":-1.7140181933262313,"2":1.5693727445273091,"3":2.3477171222332833}},{"sx":1,"sy":1,"depth":4,"w":{"0":0.3272032944794072,"1":-7.750670133911212,"2":0.4452843430750218,"3":1.9020459112943524}},{"sx":1,"sy":1,"depth":4,"w":{"0":-1.1721611824348788,"1":1.4105892989439321,"2":-3.486816004330851,"3":3.970379256740136}},{"sx":1,"sy":1,"depth":4,"w":{"0":-0.905911119398693,"1":0.24571481196592493,"2":-0.3849728806032923,"3":-6.807119988367069}},{"sx":1,"sy":1,"depth":4,"w":{"0":0.4479453120640671,"1":-0.1338461138196828,"2":0.3457642405269396,"3":-0.9492261742394467}},{"sx":1,"sy":1,"depth":4,"w":{"0":-0.04164265789478676,"1":4.805408560758835,"2":4.407498464566794,"3":-0.8752179277939529}},{"sx":1,"sy":1,"depth":4,"w":{"0":0.985295190798909,"1":-2.1239173661464106,"2":0.5879575984834756,"3":4.112848806724622}},{"sx":1,"sy":1,"depth":4,"w":{"0":-4.832884713680071,"1":2.1537260520120665,"2":0.08668177618542752,"3":0.015944869339989953}},{"sx":1,"sy":1,"depth":4,"w":{"0":-3.6720923965775465,"1":-1.8773596365556586,"2":-4.410626467763958,"3":-0.3283164163196079}},{"sx":1,"sy":1,"depth":4,"w":{"0":2.7271922653401517,"1":0.9692232841287071,"2":0.9347885753332112,"3":1.68711970210547}}],"biases":{"sx":1,"sy":1,"depth":10,"w":{"0":0.2713805717203875,"1":0.3192822155329105,"2":-1.7329104445976924,"3":0.8341105800906269,"4":-0.12278363137737174,"5":-1.3605441150889859,"6":-1.553235939388501,"7":0.8848941856840311,"8":0.44986592018761695,"9":-2.8653122782909484}}},{"out_depth":10,"out_sx":1,"out_sy":1,"layer_type":"sigmoid"},{"out_depth":10,"out_sx":1,"out_sy":1,"layer_type":"fc","num_inputs":10,"l1_decay_mul":0,"l2_decay_mul":1,"filters":[{"sx":1,"sy":1,"depth":10,"w":{"0":0.39907137728816383,"1":-0.9144920649501781,"2":-0.45313517439295664,"3":-1.160022745350705,"4":-0.21577765328961385,"5":-0.6462273560785405,"6":-1.0242963937589573,"7":-0.22422771800416041,"8":-0.8118441300295723,"9":0.14942824243590877}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.6286341472132564,"1":0.5924156846761166,"2":0.04320043563980951,"3":1.9665901148185858,"4":0.8930486518477316,"5":-0.06961807351165712,"6":1.020202427666664,"7":-0.0519813211772125,"8":1.5839800949211564,"9":-0.7579014817974374}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.5321429779161139,"1":-2.073094052191717,"2":-3.074930841244446,"3":-2.226510923300245,"4":0.5611675145694716,"5":2.3046067386094387,"6":0.8087937500165399,"7":-0.9838536917612921,"8":-1.6414765836547043,"9":1.1692979750576225}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.07581771379415937,"1":1.3581662558474428,"2":-0.38663962725032264,"3":0.8602082958967032,"4":0.08356800772330508,"5":-0.8026410380149009,"6":-0.5588812468791476,"7":0.6924260658641701,"8":0.9128999417149106,"9":-1.4470042478800613}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.5886414714616898,"1":-0.22514707743627704,"2":-0.6835481849530319,"3":0.17717279673261566,"4":0.7917677811826791,"5":-1.3195277892070927,"6":-0.9379649048045992,"7":-1.1613823815401472,"8":-0.5373864692136405,"9":0.8070550873475751}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.7419100114784488,"1":-0.09581102798645952,"2":-0.4720284421536135,"3":1.7375439730523115,"4":-0.30273582561594775,"5":0.18976005582757624,"6":-0.9680861362069846,"7":1.6095059965349048,"8":0.9448564909715287,"9":-1.7229200924934382}},{"sx":1,"sy":1,"depth":10,"w":{"0":2.7717127605852774,"1":-3.7064196712051056,"2":-0.41823801092038465,"3":-2.902824805149711,"4":-2.1465831052188844,"5":-2.1641110226058964,"6":-1.2488396487363926,"7":2.526918805901106,"8":-3.854211599805247,"9":2.9714958482278755}},{"sx":1,"sy":1,"depth":10,"w":{"0":0.34078661744464395,"1":-0.01110193019514352,"2":0.010622680573340922,"3":-0.4010688835970714,"4":0.3746013990982569,"5":-0.6622242078271665,"6":-0.5202868650836372,"7":-0.6518813181789259,"8":0.0518582755622039,"9":-0.23187172121472352}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.301667081770231,"1":0.3104136741403531,"2":0.794640853102369,"3":0.33426117764260166,"4":0.319037239618329,"5":-1.2206344355564531,"6":0.5272778946949169,"7":-0.6294449813224398,"8":1.5084337111166113,"9":-1.9244932190947652}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.3803210965008968,"1":0.582178218522328,"2":0.15836624347547512,"3":0.2323122485406622,"4":0.280039552055964,"5":-0.4948170774347832,"6":-0.6824888790907041,"7":-0.6762799465922988,"8":0.23454812049444101,"9":-0.6530526677682619}}],"biases":{"sx":1,"sy":1,"depth":10,"w":{"0":-0.7905166159325034,"1":0.4119815574121636,"2":-1.0892639673331386,"3":0.09432000634796307,"4":0.16779260951349023,"5":0.6806447684790911,"6":0.6522525944324393,"7":-0.12556896736670906,"8":-0.13314029377641767,"9":0.2462521993079984}}},{"out_depth":10,"out_sx":1,"out_sy":1,"layer_type":"sigmoid"},{"out_depth":10,"out_sx":1,"out_sy":1,"layer_type":"fc","num_inputs":10,"l1_decay_mul":0,"l2_decay_mul":1,"filters":[{"sx":1,"sy":1,"depth":10,"w":{"0":-0.26862971292175897,"1":-0.7491295998405684,"2":0.6210773160641868,"3":-0.6209481458515097,"4":-0.7951320453504029,"5":-0.8454357417447702,"6":-0.5394148603889052,"7":-0.39174978202479266,"8":-0.9239045408865432,"9":-0.13211338376025283}},{"sx":1,"sy":1,"depth":10,"w":{"0":0.06242697011307885,"1":0.017192373876499575,"2":1.92180389318803,"3":-1.3261297290661265,"4":0.36301598118294937,"5":-2.529449985549054,"6":-1.3976311302008788,"7":-0.05379476957511597,"8":-0.6635483949910308,"9":-0.893796458437801}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.5368140127477357,"1":-0.7064556945410567,"2":1.4066149608872407,"3":-0.9336460941163838,"4":-0.9410027450822384,"5":-1.1857097723972219,"6":-0.9846538589714472,"7":-0.23421706720249408,"8":-0.017689225461543077,"9":-0.06368997380076073}},{"sx":1,"sy":1,"depth":10,"w":{"0":0.4669338830217948,"1":-1.0450462867403743,"2":-1.6142293283171962,"3":-0.18558181133780424,"4":1.4728389124369248,"5":-1.0835380743089047,"6":3.4531701682160025,"7":0.05963763725307507,"8":-1.8062638096899382,"9":-0.18445050482462289}},{"sx":1,"sy":1,"depth":10,"w":{"0":0.18088648857233885,"1":-1.2844809406915636,"2":-1.0399689597462363,"3":-0.7105049628596618,"4":0.017287700392859807,"5":-0.7082066165081567,"6":1.1110293089719883,"7":-0.48915191706198236,"8":-1.2003547041724414,"9":0.32609515590445953}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.12358829526680216,"1":-0.5791852860413793,"2":-0.07939334674431826,"3":-0.8085163235615317,"4":-0.5883411523253052,"5":-0.3610013264174447,"6":-0.4941434985059126,"7":-0.7596420425581936,"8":0.45320617326122103,"9":-0.7282648567213772}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.2107843931165517,"1":-0.7714716815851381,"2":0.543703517862526,"3":-0.7023111220504086,"4":-0.5187442803769928,"5":-0.14668873706482313,"6":-0.3153479717523451,"7":-0.4529801442051851,"8":-0.6776833310120589,"9":-1.0963962882123335}},{"sx":1,"sy":1,"depth":10,"w":{"0":0.5086058083484798,"1":-1.1577204854190555,"2":-1.0887657920753677,"3":-1.0524106444064638,"4":-0.2964172910317613,"5":0.09965987765661544,"6":1.8112358377192983,"7":-0.707094601197818,"8":-1.2521486963505748,"9":-0.9401752089995674}},{"sx":1,"sy":1,"depth":10,"w":{"0":0.19551653486618667,"1":-0.3003766881405395,"2":1.7795898806073212,"3":-1.3572801727538772,"4":-0.6510885728845898,"5":-0.9879806311547306,"6":-1.326051477670083,"7":-0.2237221833756959,"8":-0.6290148898322366,"9":-0.9208400824976263}},{"sx":1,"sy":1,"depth":10,"w":{"0":0.8546213972089204,"1":-1.4178988567827573,"2":-0.9707523339547152,"3":-0.31909835537515924,"4":0.5022065257498879,"5":-0.7379523459665022,"6":0.9019139899325093,"7":0.18769795231207037,"8":-1.0233258184348397,"9":-0.307842119849283}}],"biases":{"sx":1,"sy":1,"depth":10,"w":{"0":-0.773757386288462,"1":-0.19304493929348626,"2":-0.5493129129197639,"3":-0.6021275172764515,"4":-1.2677973042952013,"5":-0.7191345004616608,"6":-0.8052384891092136,"7":-1.5193042415608444,"8":-0.7244099837890285,"9":-1.298463076830187}}},{"out_depth":10,"out_sx":1,"out_sy":1,"layer_type":"sigmoid"},{"out_depth":3,"out_sx":1,"out_sy":1,"layer_type":"fc","num_inputs":10,"l1_decay_mul":0,"l2_decay_mul":1,"filters":[{"sx":1,"sy":1,"depth":10,"w":{"0":-0.23152484549887228,"1":-2.0139390429041173,"2":-0.6842008437611282,"3":1.019751702409443,"4":0.6408600297691145,"5":-0.06579509180918272,"6":0.35984238043384154,"7":1.434751677296001,"8":-0.4387030165492272,"9":0.25463290002246575}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.5951086164417635,"1":-0.8831601998322196,"2":-1.1166151626618024,"3":1.3164750796094773,"4":0.6476296988155394,"5":-0.2868636012728509,"6":-0.3706015479519236,"7":0.03342977620656801,"8":-1.4214448077104178,"9":1.020283883766988}},{"sx":1,"sy":1,"depth":10,"w":{"0":-0.2489158665056955,"1":-1.4608943672492158,"2":-0.7302733020893871,"3":1.1268128798846067,"4":0.8001874896650134,"5":-0.5695957371126712,"6":-0.27045502980538616,"7":0.8935595081105212,"8":-0.9423010187066572,"9":0.8814811173846395}}],"biases":{"sx":1,"sy":1,"depth":3,"w":{"0":0.06060134848689159,"1":0.12978262080878525,"2":0.1022052319876517}}},{"out_depth":3,"out_sx":1,"out_sy":1,"layer_type":"regression","num_inputs":3}]}
+  </textarea>
+  
+
+</body></html>
