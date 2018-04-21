@@ -1,0 +1,26 @@
+body {
+  background-color: #f0f0f0;
+  font-family: sans-serif;
+}
+
+button:focus {outline: none;}
+
+code {
+  font-size: 80%;
+  font-family: Courier;
+  color: blue;
+}
+
+li {
+  margin-bottom: 12px;
+}
+
+pre {
+  font-family: monospace;
+  line-height: 130%;
+}
+
+user {
+  color: red;
+}
+

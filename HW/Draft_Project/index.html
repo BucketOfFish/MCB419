@@ -1,0 +1,157 @@
+<!DOCTYPE html><html><head>
+    <title>Draft Project</title>
+    <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8">
+
+  </head>
+  <body>
+  <h2>MCB 419 Draft Project [<a href="http://alpha.editor.p5js.org/mcb419/sketches/Syjguvfnf">open in editor</a>]</h2>
+  <pre>  <b>due date:</b> Tue Apr 24 by 9:00 PM
+  <b>email to:</b> mcb419@gmail.com
+  <b>subject:</b> Draft Project
+  <b>email content:</b> url link to your p5js project  
+  </pre>
+
+  <user>
+    Matt Zhang
+  </user>
+  
+  <p style="color:blue; font-size:110%">
+    This draft contributes up to 8 points toward your 20-point project grade.
+    <br>You cannot apply LATE DAYS to your project draft (or to the final project).
+  </p>
+  <p>This week you will develop a first draft of your project, filling in as much detail and writing as much of the code as you can in this first week.  
+  That will give you time in the second week to focus on the more interesting, information-processing aspects of the project. Clone this file and edit the HTML and Javascript as appropriate for your project. Feel free expand/modify as necessary to fit your project.
+  </p>
+  <div id="canvas"></div>
+  <div id="gui"></div>
+  <h3>Introduction and Background</h3>
+  <p>Your project should have an introduction section.
+   Provide a general overview of your project here. For example:
+  <br>What is the goal, the inspiration, what does it build on (e.g., is it an extension of a previous hw assignment
+    is it inspired by a specific biological system)?
+  <br>What general information processing principles will be incorporated? 
+  <br>What hypothesis or hypotheses do you plan to test?  What data will you collect?  What comparisons will you make?  
+  <br>What is your measure of success for the project?
+  </p>
+    <user>
+      Reinforcement learning algorithms often learn through a process called temporal difference (TD),
+      where Q(s,a) is updated when the RL agent moves into a new state, based on the observed reward.
+      Multiple (s,a) pairs can be updated by going backwards through the agent's history, appying a discount
+      factor at each timestep. While this does emulate the Hebbian learning behavior of neurons to some degree,
+      it may be an inefficient method for training longer-term behaviors. As a biological example, if an animal
+      were to eat some food and then later become sick and throw up, the animal may learn to avoid that food in
+      the future, even though the time elapsed between eating and becoming sick was several hours. Other more
+      recent actions may not be avoided in this way. As a game-playing example, consider a game of go. A player
+      may make a risky move at some point, and then not know whether it leads to a good result or not until many
+      dozens of moves down the line. A simple TD-gamma approach may not be the most efficient way of training
+      examples like this.
+      <br>
+      I want to see if training an additional "salience" net could help speed up the training of reinforcement
+      learning algorithms in certain circumstances. Instead of assigning each point in history an update factor
+      based on the learning rate, discount factor, and elapsed time, the salience net will try to estimate the
+      optimal update factor based on inputs such as the (s,a) pair and the spread in Q(s,a) for all actions.
+      Specifically, I will train agents with and without salience nets in various OpenAI Gym environments, and
+      compare the plots of accumulated reward as a function of training time. I hypothesize that in certain
+      environments, the salience net may increase training rate, resulting in a steeper slope for the accumulated
+      reward plot.
+    </user>
+    
+  <h3>Statement of Hypothesis</h3>
+    <p>Your project should you the modeling framework to test one or more specific hypotheses. 
+      Provide clear statements for each hypothesis. Try to make them interesting and non-trivial.</p>
+    <user>
+      I hypothesize that in certain OpenAI Gym environments, adding a salience net to a reinforcement learning
+      algorithm may increase training rate, resulting in a steeper slope for the accumulated reward plot as a
+      function of training time.
+    </user>
+
+  <h3>Model Overview / Modeling Methods</h3>
+  <p>Describe specific implementation details here. It's important to have a well-defined specification before you start coding.
+  Ideally you should make these detailed enough so that somebody else could read them and have enough information to recreate the model.
+  (NOTE: you don't necessarily have to stick to these as the project develops. Most likely there will likely be changes,
+  but this gives you a good starting point.)
+  </p>
+    <user>Provide a first draft of the following modeling details (if relevant):</user>
+  <ul>
+  <li><b>Environment:</b> key features of the environment
+      <br><user>My environments will be various games in OpenAI Gym, such as CartPole, MountainCar, and MsPacman.</user>
+    
+  </li><li><b>Agent(s):</b> key features of the agent(s) in the model
+    <br><user>A reinforcement learning agent will be created for each environment with a neural net for the quality function and a softmax policy function.
+    Each agent will also have a salience net for use during training.</user>
+    
+  </li><li><b>Sensors:</b> sensory system description; describe sensor types, number, coding, etc.
+    <br><user>Sensors are whatever game-state values are provided by each environment in OpenAI Gym.</user>
+    
+  </li><li><b>Actions:</b> motor system description; describe the actions that the agent can execute
+    <br><user>Action spaces are likewise provided by each environment.</user>
+    
+  </li><li><b>Controller:</b> describe the controller architecture (e.g. FSM, neural network), what are the free/adjustable parameters? 
+    <br><user>The policy function will be softmax based on Q(s,a).</user>
+    
+  </li><li><b>Evolution:</b> will the agents evolve? If so, how.
+    <br><user>S(s,a,Q,t), the salience function, will be trained via evolution. S will be implemented by a neural net, where
+    the architecture and weights between neurons are found via a genetic algorithm. In each generation, reinforcement learning
+    algorithms are initialized with identical Q functions and a population of S functions. After training over the course of
+    several games, fitnesses of agents are assigned based on their game performance.
+    </user>
+    
+  </li><li><b>Learning:</b> will the agents learn and remember? If so, how.
+    <br><user>The agents will learn both Q(s,a) and S(s,a,Q,t). Q(s,a) will be trained
+    using a modified version of the TD-gamma algorithm, where S provides the update factor.</user>
+    
+  </li><li><b>Multi-agent interactions:</b> describe interactions between agents if relevant (communication, predator-prey, mating, etc.)
+    <br><user>There will only be a single agent trained at a time.</user>
+    
+  </li><li><b>Graphical design:</b> how do you plan to represent the above elements on the screen
+    <br><user>OpenAI Gym has display functions for each environment.</user>
+    
+  </li><li><b>User-interface:</b> how will the user interact with the model
+    <br><user>The user will not interact with the model.</user>
+    
+  </li><li><b>Additional model description</b> ...anything else you want to add about the model
+    <br><user>NA</user>
+    
+  </li></ul>
+
+  <h3>Experimental Design</h3>
+  <p>How will you design your experiments to adequately test the stated hypothesis.
+    What data will you collect?  What will be your control group(s)? What comparisons will you make?
+    <br><user>
+    For each environment, I will start with a reinforcement learning algorithm with a randomized initial Q(s,a) function.
+    This agent will be trained in the normal way, without using a salience net, and its progress will be used as the control.
+    Then, I will produce a population of agents with the same initial Q(s,a) function but an array of S(s,a,Q,t) functions
+    with different architectures and neuronal weights. These will be trained over a period of many games and then mated based
+    on performance. Each generation starts training again with the same initial Q(s,a) function. After several generations,
+    the agent with the best S(s,a,Q,t) function will be trained from scratch, and its progress will be compared with control.
+    </user>
+    </p>
+    
+  <h3>Data Analysis and Presentation</h3>
+    <p>How will you analyze your data?  What tables, graphs, historgrams will be generated? What quantitative measures will you use to
+      test your hypothesis?
+    <br><user>I will provide plots of training performance (measured via total reward over a game) compared for agents with no
+      salience nets vs. an agents with a salience net. I will compare the rate at which these agents are able to learn.</user>
+    </p>
+  
+    <h3>Javascript coding</h3>
+    <p>How much of the coding has been written and debugged? What do you have left to do?
+    <br><user>I am writing this code in Python. I have set up OpenAI Gym and trained reinforcement learning algorithms on
+      multiple environments using the standard TD-gamma algorithm. I have also implemented the salience net architecture,
+      but have not yet set up the method of training it via a genetic algorithm.</user>
+    </p>
+  
+  <h3>Additional information</h3>
+  <p>Feel free to add any other details that are important for your project.
+    <br><user>NA</user>
+    </p>
+  <p>
+    === END OF PROJECT DRAFT ===
+    <br>&nbsp;
+  </p>
+
+
+</body></html>
