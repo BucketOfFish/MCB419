@@ -6,14 +6,22 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 
+############
+# SETTINGS #
+############
+
 env = gym.make('CartPole-v0')
 
 n_games = 10000
 learning_rate = 0.01
 weight_decay = 0.01
 gamma = 0.95
-epsilon = 0.01
 max_t = 100
+temperature = 100
+
+####################
+# NEURAL NET FOR Q #
+####################
 
 class Quality_Net(nn.Module):
     def __init__(self):
@@ -46,40 +54,54 @@ class Quality():
         return loss.data[0]
     
 quality_function = Quality()
+def quality(state, action):
+    return quality_function.eval(state,action).data[0]
 
-def policy(state):
-    if np.random.uniform(0, 1) < epsilon:
-        return np.random.choice(env.action_space.n)
-    else:
-        best_action = 0
-        best_quality = quality_function.eval(state, 0).data[0]
-        for action in range(env.action_space.n):
-            quality = quality_function.eval(state, action)
-            if quality.data[0] > best_quality:
-                best_quality = quality.data[0]
-                best_action = action
-        return best_action
+##########
+# POLICY #
+##########
 
-def value(state):
-    best_action = 0
-    best_quality = quality_function.eval(state, 0).data[0]
-    for action in range(env.action_space.n):
-        quality = quality_function.eval(state, action)
-        if quality.data[0] > best_quality:
-            best_quality = quality.data[0]
-            best_action = action
-    return best_quality
+def qualities_from_state(state): # list of (action, quality) for all actions
+    qualities = [(action, quality(state, action)) for action in range(env.action_space.n)]
+    return qualities.sort()
+
+def policy(state): # return softmax (action, quality)
+    qualities = qualities_from_state(state)
+    probs = [exp(quality[1] / temperature) for quality in qualities]
+    cumulative_prob = np.cumsum(probs)
+    throw = np.random.rand()*cumulative_prob[-1]
+    action_choice = np.searchsorted(cumulative_prob, throw)
+    return qualities[action_choice]
+
+######################
+# TRAIN VIA TD-GAMMA #
+######################
+
+history = []
+max_history = 50
 
 for i in range(n_games):
+
     state = env.reset()
     total_reward = 0
+
     for t in range(max_t):
+
         action = policy(state)
-        old_state = state
+
+        history = [(state, action)] + history
+        if len(history) > max_history:
+            history.pop(-1)
+
         state, reward, done, _ = env.step(action)
         total_reward += reward
-        #quality_function.train(old_state, action, (1-lr) * quality_function.eval(old_state, action) + lr * (reward + value(state)))
-        quality_function.train(old_state, action, reward + value(state))
+
+        history_quality = s
+        for history_point in history:
+            (history_state, history_action) = history_point
+            quality_function.train(old_state, action, reward + value(state))
+
         if (done): break
+
     if i%100 == 0:
         print("Iteration", i, "Reward", total_reward)
