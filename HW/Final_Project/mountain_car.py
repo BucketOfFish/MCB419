@@ -9,10 +9,10 @@ import torch.optim as optim
 # NEURAL NET FOR Q #
 ####################
 
-env = gym.make('Breakout-ram-v0')
-n_input_neurons = 129
+env = gym.make('MountainCar-v0')
+n_input_neurons = 3
 
-n_hidden_neurons = 20
+n_hidden_neurons = 10
 learning_rate = 0.001
 weight_decay = 0.01
 
@@ -25,8 +25,6 @@ class Quality_Net(nn.Module):
     def forward(self, state, action):
         x = torch.cat([state, action])
         x = F.relu(self.input(x))
-        x = F.relu(self.hidden(x))
-        x = F.relu(self.hidden(x))
         x = F.relu(self.hidden(x))
         x = self.output(x)
         return x
