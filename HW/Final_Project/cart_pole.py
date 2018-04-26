@@ -9,9 +9,11 @@ import torch.optim as optim
 # NEURAL NET FOR Q #
 ####################
 
-# env = gym.make('MountainCar-v0')
-env = gym.make('CartPole-v0')
-n_input_neurons = 5
+env = gym.make('MountainCar-v0')
+n_input_neurons = 3
+
+# env = gym.make('CartPole-v0')
+# n_input_neurons = 5
 
 n_hidden_neurons = 10
 learning_rate = 0.001
@@ -37,8 +39,8 @@ class Quality_Net(nn.Module):
 class Agent(RLAgent):
     def init_model(self):
         self.env = env
-        self.net = Quality_Net()
-        self.optimizer = optim.Adam(self.net.parameters(), lr=learning_rate, weight_decay=weight_decay)
+        self.quality_function = Quality_Net()
+        self.quality_optimizer = optim.Adam(self.quality_function.parameters(), lr=learning_rate, weight_decay=weight_decay)
         self.lossFunction = nn.MSELoss()
     
 Learner = Agent()

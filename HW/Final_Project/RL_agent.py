@@ -2,15 +2,17 @@ from abc import abstractmethod
 import numpy as np
 from torch import FloatTensor
 from torch.autograd import Variable
+from collections import deque
 
 ############
 # SETTINGS #
 ############
 
-n_games = 10000
+n_games = 3000
 alpha = 1
 gamma = 0.8
 temperature = 10
+max_history = 50
 
 ############
 # RL Agent #
@@ -26,20 +28,20 @@ class RLAgent:
         pass
 
     def eval(self, state, action):
-        return self.net(Variable(FloatTensor(state)), Variable(FloatTensor([action])))
+        return self.quality_function(Variable(FloatTensor(state)), Variable(FloatTensor([action])))
 
     def Q(self, state, action):
         return self.eval(state,action).data[0]
 
     def train(self, state, action, quality):
-        self.net.train()
-        self.optimizer.zero_grad()
+        self.quality_function.train()
+        self.quality_optimizer.zero_grad()
         predicted_quality = self.eval(state, action)
         quality = Variable(FloatTensor([quality]))
         quality.requires_grad = False
         loss = self.lossFunction(predicted_quality, quality)
         loss.backward()
-        self.optimizer.step()
+        self.quality_optimizer.step()
         return loss.data[0]
 
     ##########
@@ -69,8 +71,7 @@ class RLAgent:
 
     def learn(self):
 
-        history = []
-        max_history = 50
+        history = deque(maxlen=max_history)
 
         for i in range(n_games):
             state = self.env.reset()
@@ -80,9 +81,7 @@ class RLAgent:
                 self.env.render()
                 # take a step and add to history
                 (action, quality) = self.policy(state)
-                history = [(state, action, quality)] + history
-                if len(history) > max_history:
-                    history.pop(-1)
+                history.appendleft((state, action, quality))
                 state, reward, done, _ = self.env.step(action)
                 total_reward += reward
                 # update Q function
