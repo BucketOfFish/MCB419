@@ -13,7 +13,7 @@ from torch.autograd import Variable
 env = gym.make('MsPacman-ram-v0')
 
 n_games = 3000
-learning_rate = 0.5
+learning_rate = 0.1
 weight_decay = 0.01
 gamma = 0.95
 temperature = 10
@@ -31,6 +31,8 @@ class Quality_Net(nn.Module):
     def forward(self, state, action):
         x = torch.cat([state, action])
         x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
+        x = F.relu(self.hidden(x))
         x = F.relu(self.hidden(x))
         x = self.output(x)
         return x
