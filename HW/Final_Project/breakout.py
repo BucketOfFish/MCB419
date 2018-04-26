@@ -10,7 +10,7 @@ from torch.autograd import Variable
 # SETTINGS #
 ############
 
-env = gym.make('MsPacman-ram-v0')
+env = gym.make('Pong-ram-v0')
 
 n_games = 3000
 learning_rate = 0.1
