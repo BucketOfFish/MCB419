@@ -45,6 +45,23 @@ class RLAgent:
         self.quality_optimizer.step()
         return loss.data[0]
 
+    def eval_salience(self, state, action, quality, t_back):
+        return self.salience_function(Variable(FloatTensor(state)), Variable(FloatTensor([action])), Variable(FloatTensor([quality])), Variable(FloatTensor([t_back])))
+
+    def S(self, state, action, t_back):
+        return self.eval_salience(state, action, Q(state, action), t_back).data[0]
+
+    def train_salience(self, state, action, quality, t_back, salience):
+        self.salience_function.train()
+        self.optimizer.zero_grad()
+        predicted_salience = self.eval_salience(state, action, quality, t_back)
+        salience = Variable(FloatTensor([salience]))
+        salience.requires_grad = False
+        loss = self.salience_lossFunction(predicted_salience, salience)
+        loss.backward()
+        self.salience_optimizer.step()
+        return loss.data[0]
+
     ##########
     # POLICY #
     ##########
