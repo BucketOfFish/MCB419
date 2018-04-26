@@ -9,11 +9,11 @@ import torch.optim as optim
 # NEURAL NET FOR Q #
 ####################
 
-env = gym.make('MountainCar-v0')
-n_input_neurons = 3
+# env = gym.make('MountainCar-v0')
+# n_input_neurons = 3
 
-# env = gym.make('CartPole-v0')
-# n_input_neurons = 5
+env = gym.make('CartPole-v0')
+n_input_neurons = 5
 
 n_hidden_neurons = 10
 learning_rate = 0.001

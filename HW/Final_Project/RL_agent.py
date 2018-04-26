@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import numpy as np
+import random
 from torch import FloatTensor
 from torch.autograd import Variable
 from collections import deque
@@ -9,10 +10,10 @@ from collections import deque
 ############
 
 n_games = 3000
-alpha = 1
-gamma = 0.8
-temperature = 10
-max_history = 50
+gamma = 0.95
+temperature = 1
+max_memory = 1000
+memory_batch_size = 50
 
 ############
 # RL Agent #
@@ -27,16 +28,16 @@ class RLAgent:
     def init_model(self):
         pass
 
-    def eval(self, state, action):
+    def eval_quality(self, state, action):
         return self.quality_function(Variable(FloatTensor(state)), Variable(FloatTensor([action])))
 
     def Q(self, state, action):
-        return self.eval(state,action).data[0]
+        return self.eval_quality(state,action).data[0]
 
-    def train(self, state, action, quality):
+    def train_quality(self, state, action, quality):
         self.quality_function.train()
         self.quality_optimizer.zero_grad()
-        predicted_quality = self.eval(state, action)
+        predicted_quality = self.eval_quality(state, action)
         quality = Variable(FloatTensor([quality]))
         quality.requires_grad = False
         loss = self.lossFunction(predicted_quality, quality)
@@ -54,9 +55,6 @@ class RLAgent:
         # print(qualities)
         return qualities
 
-    def V(self, state):
-        return self.qualities_from_state(state)[0][1]
-
     def policy(self, state): # return softmax (action, quality)
         qualities = self.qualities_from_state(state)
         probs = [np.exp(quality[1] / temperature) for quality in qualities]
@@ -71,7 +69,7 @@ class RLAgent:
 
     def learn(self):
 
-        history = deque(maxlen=max_history)
+        memory = deque(maxlen=max_memory)
 
         for i in range(n_games):
             state = self.env.reset()
@@ -79,18 +77,20 @@ class RLAgent:
             while True:
                 # animate
                 self.env.render()
-                # take a step and add to history
+                # take a step and add to memory
                 (action, quality) = self.policy(state)
-                history.appendleft((state, action, quality))
-                state, reward, done, _ = self.env.step(action)
+                new_state, reward, done, _ = self.env.step(action)
+                memory.appendleft((state, action, reward, new_state, done))
                 total_reward += reward
+                state = new_state
                 # update Q function
-                if done: reward = -500
-                quality_difference = reward + gamma * self.V(state) - quality
-                for t_back, history_point in enumerate(history):
-                    (h_state, h_action, h_quality) = history_point
-                    # print(pow(gamma, t_back) * quality_difference + h_quality)
-                    self.train(h_state, h_action, alpha * pow(gamma, t_back+1) * quality_difference + h_quality)
+                if len(memory) >= memory_batch_size:
+                    minibatch = random.sample(memory, memory_batch_size)
+                    for m_state, m_action, m_reward, m_next_state, m_done in minibatch:
+                        target = m_reward
+                        if not m_done:
+                            target = (m_reward + gamma * self.policy(m_next_state)[1]) # SARSA
+                        self.train_quality(m_state, m_action, target)
                 if (done): break
             if i%10 == 0:
                 print("Iteration", i, "Reward", total_reward)
