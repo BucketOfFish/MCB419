@@ -10,6 +10,7 @@ from torch.autograd import Variable
 # SETTINGS #
 ############
 
+# env = gym.make('MountainCar-v0')
 env = gym.make('CartPole-v0')
 
 n_games = 10000
@@ -54,7 +55,7 @@ class Quality():
         return loss.data[0]
     
 quality_function = Quality()
-def quality(state, action):
+def Q(state, action):
     return quality_function.eval(state,action).data[0]
 
 ##########
@@ -62,12 +63,16 @@ def quality(state, action):
 ##########
 
 def qualities_from_state(state): # list of (action, quality) for all actions
-    qualities = [(action, quality(state, action)) for action in range(env.action_space.n)]
-    return qualities.sort()
+    qualities = [(action, Q(state, action)) for action in range(env.action_space.n)]
+    qualities.sort()
+    return qualities
+
+def V(state):
+    return qualities_from_state(state)[0][1]
 
 def policy(state): # return softmax (action, quality)
     qualities = qualities_from_state(state)
-    probs = [exp(quality[1] / temperature) for quality in qualities]
+    probs = [np.exp(quality[1] / temperature) for quality in qualities]
     cumulative_prob = np.cumsum(probs)
     throw = np.random.rand()*cumulative_prob[-1]
     action_choice = np.searchsorted(cumulative_prob, throw)
@@ -81,27 +86,23 @@ history = []
 max_history = 50
 
 for i in range(n_games):
-
     state = env.reset()
     total_reward = 0
-
     for t in range(max_t):
-
-        action = policy(state)
-
-        history = [(state, action)] + history
+        # animate
+        env.render()
+        # take a step and add to history
+        (action, quality) = policy(state)
+        history = [(state, action, quality)] + history
         if len(history) > max_history:
             history.pop(-1)
-
         state, reward, done, _ = env.step(action)
         total_reward += reward
-
-        history_quality = s
-        for history_point in history:
-            (history_state, history_action) = history_point
-            quality_function.train(old_state, action, reward + value(state))
-
+        # update Q function
+        quality_difference = reward + gamma * V(state) - quality
+        for t_back, history_point in enumerate(history):
+            (h_state, h_action, h_quality) = history_point
+            quality_function.train(h_state, h_action, pow(gamma, t_back) * quality_difference + h_quality)
         if (done): break
-
-    if i%100 == 0:
+    if i%10 == 0:
         print("Iteration", i, "Reward", total_reward)
