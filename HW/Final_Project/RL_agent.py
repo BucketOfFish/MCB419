@@ -3,10 +3,18 @@ import numpy as np
 from torch import FloatTensor
 from torch.autograd import Variable
 
+############
+# SETTINGS #
+############
+
 n_games = 10000
 alpha = 1
 gamma = 0.8
 temperature = 10
+
+############
+# RL Agent #
+############
 
 class RLAgent:
 
