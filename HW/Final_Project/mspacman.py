@@ -10,15 +10,12 @@ from torch.autograd import Variable
 # SETTINGS #
 ############
 
-# env = gym.make('MountainCar-v0')
-env = gym.make('CartPole-v0')
+env = gym.make('MsPacman-ram-v0')
 
-
-n_games = 10000
-learning_rate = 0.1
-alpha = 1
+n_games = 3000
+learning_rate = 0.5
 weight_decay = 0.01
-gamma = 0.8
+gamma = 0.95
 temperature = 10
 
 ####################
@@ -28,11 +25,13 @@ temperature = 10
 class Quality_Net(nn.Module):
     def __init__(self):
         super().__init__()
-        self.input = nn.Linear(5, 5)
-        self.output = nn.Linear(5, 1)
+        self.input = nn.Linear(129, 20)
+        self.hidden = nn.Linear(20, 20)
+        self.output = nn.Linear(20, 1)
     def forward(self, state, action):
         x = torch.cat([state, action])
         x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
         x = self.output(x)
         return x
 
@@ -100,13 +99,12 @@ for i in range(n_games):
             history.pop(-1)
         state, reward, done, _ = env.step(action)
         total_reward += reward
+        # print(reward)
         # update Q function
-        if done: reward = -500
         quality_difference = reward + gamma * V(state) - quality
         for t_back, history_point in enumerate(history):
             (h_state, h_action, h_quality) = history_point
-            # print(pow(gamma, t_back) * quality_difference + h_quality)
-            quality_function.train(h_state, h_action, alpha * pow(gamma, t_back+1) * quality_difference + h_quality)
+            quality_function.train(h_state, h_action, pow(gamma, t_back) * quality_difference + h_quality)
         if (done): break
     if i%10 == 0:
         print("Iteration", i, "Reward", total_reward)
