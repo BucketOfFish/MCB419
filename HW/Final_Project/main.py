@@ -13,6 +13,9 @@ env = gym.make('CartPole-v0')
 # TRAINING #
 ############
 
+learning_rate = 0.001
+weight_decay = 0.01
+
 class Agent(RLAgent):
     def init_model(self):
         self.env = env
