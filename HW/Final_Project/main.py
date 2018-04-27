@@ -6,7 +6,6 @@ from RL_agent import RLAgent
 ###############
 
 from cart_pole import *
-env = gym.make('CartPole-v0')
 
 ############
 # TRAINING #

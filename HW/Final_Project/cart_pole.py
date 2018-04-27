@@ -3,6 +3,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+###############
+# ENVIRONMENT #
+###############
+
+env = gym.make('CartPole-v0')
+
 ####################
 # NEURAL NET FOR Q #
 ####################
