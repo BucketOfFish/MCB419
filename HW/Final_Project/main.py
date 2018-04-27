@@ -1,6 +1,5 @@
 import gym
-# from RL_agent import RLAgent
-from RL_agent_with_salience import RLAgent
+from RL_agent import RLAgent
 
 ###############
 # ENVIRONMENT #
@@ -15,6 +14,7 @@ env = gym.make('CartPole-v0')
 
 learning_rate = 0.001
 weight_decay = 0.01
+use_salience_net = False
 
 class Agent(RLAgent):
     def init_model(self):
@@ -29,4 +29,4 @@ class Agent(RLAgent):
         self.salience_lossFunction = nn.MSELoss()
     
 Learner = Agent()
-Learner.learn()
+Learner.learn(use_salience_net)

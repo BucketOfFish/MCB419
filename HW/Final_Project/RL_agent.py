@@ -10,7 +10,7 @@ from collections import deque
 ############
 
 n_games = 3000
-gamma = 0.95
+gamma = 0.9
 temperature = 1
 max_memory = 1000
 memory_batch_size = 50
@@ -23,17 +23,15 @@ class RLAgent:
 
     def __init__(self):
         self.init_model()
-
     @abstractmethod
     def init_model(self):
         pass
 
+    # quality
     def eval_quality(self, state, action):
         return self.quality_function(Variable(FloatTensor(state)), Variable(FloatTensor([action])))
-
     def Q(self, state, action):
         return self.eval_quality(state,action).data[0]
-
     def train_quality(self, state, action, quality):
         self.quality_function.train()
         self.quality_optimizer.zero_grad()
@@ -44,6 +42,12 @@ class RLAgent:
         loss.backward()
         self.quality_optimizer.step()
         return loss.data[0]
+
+    # salience
+    def eval_salience(self, state, all_qualities, action):
+        return self.salience_function(Variable(FloatTensor(state)), Variable(FloatTensor(all_qualities)), Variable(FloatTensor([action])))
+    def S(self, state, all_qualities, action):
+        return self.eval_salience(state, all_qualities, action).data[0]
 
     ##########
     # POLICY #
@@ -67,7 +71,7 @@ class RLAgent:
     # TRAIN VIA TD-GAMMA #
     ######################
 
-    def learn(self):
+    def learn(self, use_salience_net):
 
         memory = deque(maxlen=max_memory)
 
@@ -80,7 +84,12 @@ class RLAgent:
                 # take a step and add to memory
                 (action, quality) = self.policy(state)
                 new_state, reward, done, _ = self.env.step(action)
-                memory.appendleft((state, action, reward, new_state, done))
+                if use_salience_net:
+                    all_qualities = [self.Q(state, action) for action in range(self.env.action_space.n)]
+                    if self.S(state, all_qualities, action) > 0.7 or len(memory) < max_memory:
+                        memory.appendleft((state, action, reward, new_state, done))
+                else:
+                    memory.appendleft((state, action, reward, new_state, done))
                 total_reward += reward
                 state = new_state
                 # update Q function
