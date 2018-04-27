@@ -1,4 +1,3 @@
-import gym
 from RL_agent import RLAgent
 
 ###############
@@ -24,8 +23,6 @@ class Agent(RLAgent):
         self.quality_lossFunction = nn.MSELoss()
         # salience
         self.salience_function = Salience_Net()
-        self.salience_optimizer = optim.Adam(self.salience_function.parameters(), lr=learning_rate, weight_decay=weight_decay)
-        self.salience_lossFunction = nn.MSELoss()
     
 Learner = Agent()
 Learner.learn(use_salience_net)
