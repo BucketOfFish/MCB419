@@ -9,7 +9,6 @@ from collections import deque
 # SETTINGS #
 ############
 
-n_games = 3000
 gamma = 0.9
 temperature = 1
 max_memory = 1000
@@ -71,35 +70,45 @@ class RLAgent:
     # TRAIN VIA TD-GAMMA #
     ######################
 
-    def learn(self, use_salience_net):
-
+    def run(self, use_salience_net, train=False, n_games=500):
         memory = deque(maxlen=max_memory)
-
+        average_reward = 0
         for i in range(n_games):
             state = self.env.reset()
             total_reward = 0
             while True:
                 # animate
-                self.env.render()
-                # take a step and add to memory
+                if self.animate:
+                    self.env.render()
+                # take a step
                 (action, quality) = self.policy(state)
                 new_state, reward, done, _ = self.env.step(action)
-                if use_salience_net:
-                    all_qualities = [self.Q(state, action) for action in range(self.env.action_space.n)]
-                    if self.S(state, all_qualities, action) > 0.7 or len(memory) < max_memory:
+                # update Q function
+                if train:
+                    # add to memory
+                    if use_salience_net:
+                        all_qualities = [self.Q(state, action) for action in range(self.env.action_space.n)]
+                        if self.S(state, all_qualities, action) > 0.7 or len(memory) < max_memory:
+                            memory.appendleft((state, action, reward, new_state, done))
+                    else:
                         memory.appendleft((state, action, reward, new_state, done))
-                else:
-                    memory.appendleft((state, action, reward, new_state, done))
+                    # update Q function
+                    if len(memory) >= memory_batch_size:
+                        minibatch = random.sample(memory, memory_batch_size)
+                        for m_state, m_action, m_reward, m_next_state, m_done in minibatch:
+                            target = m_reward
+                            if not m_done:
+                                target = (m_reward + gamma * self.policy(m_next_state)[1]) # SARSA
+                            self.train_quality(m_state, m_action, target)
+                # total reward
                 total_reward += reward
                 state = new_state
-                # update Q function
-                if len(memory) >= memory_batch_size:
-                    minibatch = random.sample(memory, memory_batch_size)
-                    for m_state, m_action, m_reward, m_next_state, m_done in minibatch:
-                        target = m_reward
-                        if not m_done:
-                            target = (m_reward + gamma * self.policy(m_next_state)[1]) # SARSA
-                        self.train_quality(m_state, m_action, target)
                 if (done): break
-            if i%10 == 0:
-                print("Iteration", i, "Reward", total_reward)
+            # if i%10 == 0:
+                # print("Iteration", i, "Reward", total_reward)
+            average_reward += total_reward
+        return average_reward / n_games
+
+    def learn(self, use_salience_net):
+        self.run(use_salience_net, train=True, n_games=50)
+        return self.run(use_salience_net, train=False, n_games=20)
