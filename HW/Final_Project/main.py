@@ -3,7 +3,7 @@ import numpy as np
 from collections import OrderedDict
 from RL_agent import RLAgent
 from threading import Thread
-import sys
+import sys, os
 
 ###############
 # ENVIRONMENT #
@@ -69,7 +69,10 @@ else:
         population = list(population)
         print("Most fit individual has a fitness of", fitnesses[0])
         # enshrine best individual
-            # population
+        if not os.path.exists('Saved/Gen'+str(generation+1)):
+            os.makedirs('Saved/Gen'+str(generation+1))
+        torch.save(population[0].quality_function.state_dict(), 'Saved/Gen'+str(generation+1)+'/best_Q_net.pt')
+        torch.save(population[0].salience_function.state_dict(), 'Saved/Gen'+str(generation+1)+'/best_S_net.pt')
         # mating
         print("Mating")
         mate_probs = [np.exp(fitness / population_temperature) for fitness in fitnesses]
