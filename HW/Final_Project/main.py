@@ -2,6 +2,8 @@ import torch
 import numpy as np
 from collections import OrderedDict
 from RL_agent import RLAgent
+from threading import Thread
+import sys
 
 ###############
 # ENVIRONMENT #
@@ -54,20 +56,26 @@ else:
         population.append(agent)
     # evolve
     for generation in range(generations):
-        print("Entering generation", generation)
+        print("Entering generation", generation+1)
         # evaluate population
-        fitnesses = []
+        threads = [None] * population_size
+        fitnesses = [None] * population_size
         for individual in range(population_size):
-            print(".", end='', flush=True)
-            agent = population[individual]
-            fitnesses.append(agent.learn(use_salience_net = True))
-        fitnesses, population = zip(*sorted(zip(fitnesses, population)))
+            threads[individual] = Thread(target=population[individual].learn_and_record, kwargs={'use_salience_net': True, 'results': fitnesses, 'index': individual})
+            threads[individual].start()
+        for individual in range(population_size):
+            threads[individual].join()
+        fitnesses, population = zip(*sorted(zip(fitnesses, population), key=lambda pair: pair[0]))
+        population = list(population)
         print("Most fit individual has a fitness of", fitnesses[-1])
         # mating
+        print("Mating")
         mate_probs = [np.exp(fitness / population_temperature) for fitness in fitnesses]
         cumulative_prob = np.cumsum(mate_probs)
         new_population = population[:keep_top_n]
         for individual in range(population_size - keep_top_n):
+            sys.stdout.write("\rGestating Child "+str(individual+1)+"/"+str(population_size - keep_top_n))
+            sys.stdout.flush()
             # find mates
             throw = np.random.rand()*cumulative_prob[-1]
             guy = np.searchsorted(cumulative_prob, throw)
@@ -76,8 +84,8 @@ else:
                 girl = np.searchsorted(cumulative_prob, throw)
                 if guy != girl: break
             # mate
-            dad_DNA = guy.salience_function.state_dict()
-            mom_DNA = girl.salience_function.state_dict()
+            dad_DNA = population[guy].salience_function.state_dict()
+            mom_DNA = population[girl].salience_function.state_dict()
             child_DNA = OrderedDict()
             for key in dad_DNA:
                 dad_gene = dad_DNA[key]
@@ -97,7 +105,8 @@ else:
                 child_gene = child_gene.view(gene_shape)
                 child_DNA[key] = child_gene
             child = Agent()
-            child.quality_function.load_state_dict(child_DNA)
+            child.salience_function.load_state_dict(child_DNA)
             # mutate
-            population.append(child)
+            new_population.append(child)
+        print()
         population = new_population

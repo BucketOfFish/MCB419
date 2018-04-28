@@ -4,6 +4,7 @@ import random
 from torch import FloatTensor
 from torch.autograd import Variable
 from collections import deque
+import sys
 
 ############
 # SETTINGS #
@@ -70,10 +71,19 @@ class RLAgent:
     # TRAIN VIA TD-GAMMA #
     ######################
 
-    def run(self, use_salience_net, train=False, n_games=500):
+    def run(self, use_salience_net, train=False, n_games=500, index=0):
         memory = deque(maxlen=max_memory)
         average_reward = 0
         for i in range(n_games):
+            if index==0:
+                if train:
+                    sys.stdout.write("\rTraining Game "+str(i+1)+"/"+str(n_games))
+                else:
+                    sys.stdout.write("\rEvaluating Game "+str(i+1)+"/"+str(n_games))
+                sys.stdout.flush()
+                if i+1 == n_games:
+                    print()
+            # print(".", end='', flush=True)
             state = self.env.reset()
             total_reward = 0
             while True:
@@ -83,6 +93,9 @@ class RLAgent:
                 # take a step
                 (action, quality) = self.policy(state)
                 new_state, reward, done, _ = self.env.step(action)
+                # print("Agent", index, "Game", i, "State", state[0], "New_State", new_state[0], "Done", done)
+                if done:
+                    self.env.reset() # has to be here because else the program complains during threading
                 # update Q function
                 if train:
                     # add to memory
@@ -109,6 +122,9 @@ class RLAgent:
             average_reward += total_reward
         return average_reward / n_games
 
-    def learn(self, use_salience_net):
-        self.run(use_salience_net, train=True, n_games=50)
-        return self.run(use_salience_net, train=False, n_games=20)
+    def learn(self, use_salience_net, index):
+        self.run(use_salience_net, train=True, n_games=2, index=index)
+        return self.run(use_salience_net, train=False, n_games=20, index=index)
+
+    def learn_and_record(self, use_salience_net, results, index):
+        results[index] = self.learn(use_salience_net, index)
