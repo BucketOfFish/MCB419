@@ -65,9 +65,11 @@ else:
             threads[individual].start()
         for individual in range(population_size):
             threads[individual].join()
-        fitnesses, population = zip(*sorted(zip(fitnesses, population), key=lambda pair: pair[0]))
+        fitnesses, population = zip(*sorted(zip(fitnesses, population), key=lambda pair: pair[0], reverse=True))
         population = list(population)
-        print("Most fit individual has a fitness of", fitnesses[-1])
+        print("Most fit individual has a fitness of", fitnesses[0])
+        # enshrine best individual
+            # population
         # mating
         print("Mating")
         mate_probs = [np.exp(fitness / population_temperature) for fitness in fitnesses]
@@ -108,5 +110,5 @@ else:
             child.salience_function.load_state_dict(child_DNA)
             # mutate
             new_population.append(child)
-        print()
+        print("\n")
         population = new_population

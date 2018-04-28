@@ -75,7 +75,7 @@ class RLAgent:
         memory = deque(maxlen=max_memory)
         average_reward = 0
         for i in range(n_games):
-            if index==0:
+            if index==19:
                 if train:
                     sys.stdout.write("\rTraining Game "+str(i+1)+"/"+str(n_games))
                 else:
@@ -123,7 +123,7 @@ class RLAgent:
         return average_reward / n_games
 
     def learn(self, use_salience_net, index):
-        self.run(use_salience_net, train=True, n_games=2, index=index)
+        self.run(use_salience_net, train=True, n_games=50, index=index)
         return self.run(use_salience_net, train=False, n_games=20, index=index)
 
     def learn_and_record(self, use_salience_net, results, index):
