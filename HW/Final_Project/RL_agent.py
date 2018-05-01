@@ -100,9 +100,9 @@ class RLAgent:
                 if train:
                     # add to memory
                     if use_salience_net:
-                        all_qualities = [self.Q(state, action) for action in range(self.env.action_space.n)]
-                        if self.S(state, all_qualities, action) > 0.7 or len(memory) < max_memory:
-                            memory.appendleft((state, action, reward, new_state, done))
+                        # all_qualities = [self.Q(state, action) for action in range(self.env.action_space.n)]
+                        # if self.S(state, all_qualities, action) > 0.7 or len(memory) < max_memory:
+                            # memory.appendleft((state, action, reward, new_state, done))
                     else:
                         memory.appendleft((state, action, reward, new_state, done))
                     # update Q function
@@ -122,9 +122,6 @@ class RLAgent:
             average_reward += total_reward
         return average_reward / n_games
 
-    def learn(self, use_salience_net, index):
+    def learn(self, use_salience_net, index=0):
         self.run(use_salience_net, train=True, n_games=50, index=index)
         return self.run(use_salience_net, train=False, n_games=20, index=index)
-
-    def learn_and_record(self, use_salience_net, results, index):
-        results[index] = self.learn(use_salience_net, index)
