@@ -15,8 +15,8 @@ from cart_pole import *
 
 learning_rate = 0.001
 weight_decay = 0.01
-animate = False
-use_salience_net = False
+animate = True
+use_salience_net = True
 
 class Agent(RLAgent):
     def init_model(self):
@@ -28,8 +28,10 @@ class Agent(RLAgent):
         self.quality_lossFunction = nn.MSELoss()
         # salience
         self.salience_function = Salience_Net()
+        self.salience_optimizer = optim.Adam(self.salience_function.parameters(), lr=learning_rate, weight_decay=weight_decay)
+        self.salience_lossFunction = nn.MSELoss()
 
-n_history_points = 20
+n_history_points = 100
 n_training_rounds = 5
 performance_history = []
 performance_error_history = []

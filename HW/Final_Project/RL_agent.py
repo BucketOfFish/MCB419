@@ -4,6 +4,7 @@ import random
 from torch import FloatTensor
 from torch.autograd import Variable
 from collections import deque
+import time
 
 ############
 # SETTINGS #
@@ -13,6 +14,7 @@ gamma = 0.9
 temperature = 1
 max_memory = 1000
 memory_batch_size = 50
+salience_decay = 0.9
 
 ############
 # RL Agent #
@@ -22,6 +24,7 @@ class RLAgent:
 
     def __init__(self):
         self.init_model()
+        self.salience_threshold = 0 # how surprising something has to be
     @abstractmethod
     def init_model(self):
         pass
@@ -43,10 +46,20 @@ class RLAgent:
         return loss.data[0]
 
     # salience
-    def eval_salience(self, state, all_qualities, action):
-        return self.salience_function(Variable(FloatTensor(state)), Variable(FloatTensor(all_qualities)), Variable(FloatTensor([action])))
-    def S(self, state, all_qualities, action):
-        return self.eval_salience(state, all_qualities, action).data[0]
+    def eval_salience(self, state, action):
+        return self.salience_function(Variable(FloatTensor(state)), Variable(FloatTensor([action])))
+    def S(self, state, action):
+        return self.eval_salience(state, action).data[0]
+    def train_salience(self, state, action, salience):
+        self.salience_function.train()
+        self.salience_optimizer.zero_grad()
+        predicted_salience = self.eval_salience(state, action)
+        salience = Variable(FloatTensor([salience]))
+        salience.requires_grad = False
+        loss = self.salience_lossFunction(predicted_salience, salience)
+        loss.backward()
+        self.salience_optimizer.step()
+        return loss.data[0]
 
     ##########
     # POLICY #
@@ -89,9 +102,28 @@ class RLAgent:
                 if train:
                     # add to memory
                     if use_salience_net:
-                        # all_qualities = [self.Q(state, action) for action in range(self.env.action_space.n)]
-                        # if self.S(state, all_qualities, action) > 0.7 or len(memory) < max_memory:
-                            # memory.appendleft((state, action, reward, new_state, done))
+                        # update salience net - if deltaQ for this (state, action) was large, mark it as important in the net
+                        old_Q = quality
+                        if done:
+                            new_Q = reward
+                        else:
+                            new_Q = (reward + gamma * self.policy(new_state)[1]) # SARSA
+                        delta_Q = new_Q - old_Q
+                        if delta_Q > self.salience_threshold:
+                            self.salience_threshold = delta_Q
+                        self.salience_threshold *= salience_decay
+                        self.train_salience(state, action, delta_Q > self.salience_threshold)
+                        # # print whether or not a state was important
+                        # if delta_Q > self.salience_threshold:
+                            # # print("Important state-action", state, action)
+                            # print("Important state-action")
+                        # else:
+                            # # print("Unimportant state-action", state, action)
+                            # print("Unimportant state-action")
+                        # # time.sleep(0.5)
+                        # see if net says this (state, action) is worth remembering
+                        if self.S(state, action) > 0.5 or len(memory) < max_memory:
+                            memory.appendleft((state, action, reward, new_state, done))
                         pass
                     else:
                         memory.appendleft((state, action, reward, new_state, done))
