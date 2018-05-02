@@ -79,6 +79,10 @@ class RLAgent:
         action_choice = np.searchsorted(cumulative_prob, throw)
         return qualities[action_choice]
 
+    def V(self, state): # max (action, quality) from this state
+        qualities = self.qualities_from_state(state)
+        return qualities[-1]
+
     ######################
     # TRAIN VIA TD-GAMMA #
     ######################
@@ -107,8 +111,8 @@ class RLAgent:
                         if done:
                             new_Q = reward
                         else:
-                            new_Q = (reward + gamma * self.policy(new_state)[1]) # SARSA
-                        delta_Q = new_Q - old_Q
+                            new_Q = (reward + gamma * self.V(new_state)[1]) # Q-learning
+                        delta_Q = abs(new_Q - old_Q)
                         if delta_Q > self.salience_threshold:
                             self.salience_threshold = delta_Q
                         self.salience_threshold *= salience_decay
@@ -122,7 +126,7 @@ class RLAgent:
                             # print("Unimportant state-action")
                         # # time.sleep(0.5)
                         # see if net says this (state, action) is worth remembering
-                        if self.S(state, action) > 0.5 or len(memory) < max_memory:
+                        if self.S(state, action) > 0.5:
                             memory.appendleft((state, action, reward, new_state, done))
                         pass
                     else:
@@ -133,7 +137,7 @@ class RLAgent:
                         for m_state, m_action, m_reward, m_next_state, m_done in minibatch:
                             target = m_reward
                             if not m_done:
-                                target = (m_reward + gamma * self.policy(m_next_state)[1]) # SARSA
+                                target = (m_reward + gamma * self.V(m_next_state)[1]) # Q-learning
                             self.train_quality(m_state, m_action, target)
                 # total reward
                 total_reward += reward
@@ -149,7 +153,7 @@ class RLAgent:
         performance_error_history = []
         for i in range(n_history_points):
             self.run(use_salience_net, train=True, n_games=5)
-            rewards = self.run(use_salience_net, train=False, n_games=50)
+            rewards = self.run(use_salience_net, train=False, n_games=500)
             # print ("After", (i+1)*5, "games - Reward", rewards[0], "+/-", rewards[1])
             performance_history.append(rewards[0])
             performance_error_history.append(rewards[1])
