@@ -1,0 +1,55 @@
+Entering generation 1
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 29.95
+Mating
+Gestating Child 15/15
+
+Entering generation 2
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 29.65
+Mating
+Gestating Child 15/15
+
+Entering generation 3
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 30.6
+Mating
+Gestating Child 15/15
+
+Entering generation 4
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 30.75
+Mating
+Gestating Child 15/15
+
+Entering generation 5
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 28.8
+Mating
+Gestating Child 15/15
+
+Entering generation 6
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 28.5
+Mating
+Gestating Child 15/15
+
+Entering generation 7
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 30.05
+Mating
+Gestating Child 15/15
+
+Entering generation 8
+Training Game 50/50
+Evaluating Game 20/20
+Most fit individual has a fitness of 27.5
+Mating
+Gestating Child 15/15

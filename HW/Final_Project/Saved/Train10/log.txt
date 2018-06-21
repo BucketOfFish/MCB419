@@ -1,0 +1,104 @@
+Entering generation 1
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 29.5
+Mating
+Gestating Child 15/15
+
+Entering generation 2
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 28.95
+Mating
+Gestating Child 15/15
+
+Entering generation 3
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 28.15
+Mating
+Gestating Child 15/15
+
+Entering generation 4
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 35.0
+Mating
+Gestating Child 15/15
+
+Entering generation 5
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 27.1
+Mating
+Gestating Child 15/15
+
+Entering generation 6
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 32.9
+Mating
+Gestating Child 15/15
+
+Entering generation 7
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 29.75
+Mating
+Gestating Child 15/15
+
+Entering generation 8
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 32.5
+Mating
+Gestating Child 15/15
+
+Entering generation 9
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 29.65
+Mating
+Gestating Child 15/15
+
+Entering generation 10
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 30.65
+Mating
+Gestating Child 15/15
+
+Entering generation 11
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 31.75
+Mating
+Gestating Child 15/15
+
+Entering generation 12
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 32.0
+Mating
+Gestating Child 15/15
+
+Entering generation 13
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 28.8
+Mating
+Gestating Child 15/15
+
+Entering generation 14
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 31.55
+Mating
+Gestating Child 15/15
+
+Entering generation 15
+Training Game 10/10
+Evaluating Game 20/20
+Most fit individual has a fitness of 30.05
+Mating
+Gestating Child 15/15
